@@ -120,9 +120,9 @@
                         <li><span class="font-semibold text-[#FF6B6B]">Direção:</span> Ascendente (positiva) ou descendente (negativa)?</li>
                         <li><span class="font-semibold text-[#118AB2]">Força:</span> Os pontos estão próximos da linha imaginária?</li>
                      </ul>
-                     <div class="mt-4 h-24 border border-gray-300 rounded relative flex items-center justify-center bg-gray-50">
-                        <span class="absolute top-1 left-2 text-xs text-gray-500">Exemplo Positivo</span>
-                         <span class="text-xl text-[#06D6A0]">. .<span class="text-2xl"> . </span>. .</span>
+                     <div class="mt-4 h-40 border border-gray-200 rounded p-2 bg-gray-50">
+                        <canvas id="positiveScatterExample"></canvas>
+                        <p class="text-center text-xs text-gray-500 mt-1">Exemplo de correlação positiva forte.</p>
                      </div>
                  </div>
                  <div class="bg-white rounded-lg shadow-lg p-6 border-t-4 border-[#06D6A0]">
@@ -378,6 +378,45 @@
             }
         });
     </script>
+
+    <script>
+        // --- Mini Chart: Positive Scatter Example ---
+        const ctxPositiveScatter = document.getElementById('positiveScatterExample').getContext('2d');
+        const positiveData = [
+            {x: 1, y: 1.5}, {x: 2, y: 2.2}, {x: 3, y: 2.8}, {x: 4, y: 3.5},
+            {x: 5, y: 4.1}, {x: 6, y: 4.9}, {x: 7, y: 5.3}, {x: 8, y: 6.0}
+        ];
+
+        new Chart(ctxPositiveScatter, {
+            type: 'scatter',
+            data: {
+                datasets: [{
+                    label: 'Dados',
+                    data: positiveData,
+                    backgroundColor: '#06D6A0',
+                    pointRadius: 4,
+                    pointHoverRadius: 6
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    x: { display: false }, // Oculta eixo X
+                    y: { display: false }  // Oculta eixo Y
+                },
+                plugins: {
+                    legend: {
+                        display: false // Oculta legenda
+                    },
+                    tooltip: {
+                        enabled: false // Desabilita tooltips
+                    }
+                }
+            }
+        });
+    </script>
+
 
 </body>
 </html>
