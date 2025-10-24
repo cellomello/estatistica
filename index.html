@@ -11,99 +11,191 @@
     <style>
         body {
             font-family: 'Inter', sans-serif;
-            scroll-behavior: smooth;
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
         }
-        .card {
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        .container {
+            display: flex;
+            height: 100vh;
         }
-        .card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+        .sidebar {
+            width: 280px;
+            background: linear-gradient(180deg, #073B4C 0%, #118AB2 100%);
+            color: white;
+            overflow-y: auto;
+            flex-shrink: 0;
         }
-        .gradient-bg {
-            background: linear-gradient(135deg, #073B4C 0%, #118AB2 100%);
+        .content {
+            flex: 1;
+            overflow: hidden;
+        }
+        iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+        .nav-item {
+            padding: 16px 20px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            border-left: 4px solid transparent;
+        }
+        .nav-item:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+        .nav-item.active {
+            background-color: rgba(255, 255, 255, 0.2);
+            border-left-color: #FFD166;
+        }
+        .header {
+            padding: 24px 20px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        .chapter-label {
+            font-size: 11px;
+            font-weight: 600;
+            opacity: 0.8;
+            margin-bottom: 4px;
+        }
+        .chapter-title {
+            font-size: 15px;
+            font-weight: 600;
+        }
+        @media (max-width: 768px) {
+            .sidebar {
+                position: fixed;
+                left: -280px;
+                height: 100vh;
+                z-index: 1000;
+                transition: left 0.3s ease;
+            }
+            .sidebar.open {
+                left: 0;
+            }
+            .menu-toggle {
+                display: block;
+                position: fixed;
+                top: 16px;
+                left: 16px;
+                z-index: 1001;
+                background: #073B4C;
+                color: white;
+                padding: 10px;
+                border-radius: 8px;
+                cursor: pointer;
+            }
+            .overlay {
+                display: none;
+                position: fixed;
+                top: 0;
+                left: 0;
+                right: 0;
+                bottom: 0;
+                background: rgba(0, 0, 0, 0.5);
+                z-index: 999;
+            }
+            .overlay.active {
+                display: block;
+            }
+        }
+        @media (min-width: 769px) {
+            .menu-toggle {
+                display: none;
+            }
         }
     </style>
 </head>
-<body class="bg-gray-50">
-    <header class="gradient-bg text-white py-16 px-4">
-        <div class="max-w-6xl mx-auto text-center">
-            <h1 class="text-4xl md:text-5xl font-bold mb-4">Infográficos de Estatística</h1>
-            <p class="text-xl md:text-2xl text-gray-100">Explore conceitos estatísticos de forma visual e interativa</p>
-        </div>
-    </header>
+<body>
+    <button class="menu-toggle" id="menuToggle">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+        </svg>
+    </button>
 
-    <main class="max-w-6xl mx-auto px-4 py-12">
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            <a href="cap 3 - Intervalo de confianca.html" class="card bg-white rounded-lg shadow-md overflow-hidden block">
-                <div class="bg-gradient-to-r from-blue-500 to-blue-600 h-2"></div>
-                <div class="p-6">
-                    <div class="text-sm font-semibold text-blue-600 mb-2">CAPÍTULO 3</div>
-                    <h2 class="text-xl font-bold text-gray-800 mb-3">Intervalo de Confiança</h2>
-                    <p class="text-gray-600">Desvendando os intervalos de confiança e sua aplicação na estatística inferencial.</p>
+    <div class="overlay" id="overlay"></div>
+
+    <div class="container">
+        <aside class="sidebar" id="sidebar">
+            <div class="header">
+                <h1 class="text-2xl font-bold">📊 Estatística II</h1>
+                <p class="text-sm opacity-80 mt-2">Infográficos Interativos a partir do livro de Deborah Rumsey</p>
+            </div>
+            
+            <nav>
+                <div class="nav-item active" data-page="cap 3 - Intervalo de confianca.html">
+                    <div class="chapter-label">CAPÍTULO 3</div>
+                    <div class="chapter-title">Intervalo de Confiança</div>
                 </div>
-            </a>
-
-            <a href="cap 3 - testes de hipotese.html" class="card bg-white rounded-lg shadow-md overflow-hidden block">
-                <div class="bg-gradient-to-r from-green-500 to-green-600 h-2"></div>
-                <div class="p-6">
-                    <div class="text-sm font-semibold text-green-600 mb-2">CAPÍTULO 3</div>
-                    <h2 class="text-xl font-bold text-gray-800 mb-3">Testes de Hipótese</h2>
-                    <p class="text-gray-600">Compreenda os fundamentos dos testes de hipótese e sua importância na análise estatística.</p>
+                
+                <div class="nav-item" data-page="cap 3 - testes de hipotese.html">
+                    <div class="chapter-label">CAPÍTULO 3</div>
+                    <div class="chapter-title">Testes de Hipótese</div>
                 </div>
-            </a>
-
-            <a href="cap 4 - regressao linear simples.html" class="card bg-white rounded-lg shadow-md overflow-hidden block">
-                <div class="bg-gradient-to-r from-purple-500 to-purple-600 h-2"></div>
-                <div class="p-6">
-                    <div class="text-sm font-semibold text-purple-600 mb-2">CAPÍTULO 4</div>
-                    <h2 class="text-xl font-bold text-gray-800 mb-3">Regressão Linear Simples</h2>
-                    <p class="text-gray-600">Explore a relação entre duas variáveis através da regressão linear simples.</p>
+                
+                <div class="nav-item" data-page="cap 4 - regressao linear simples.html">
+                    <div class="chapter-label">CAPÍTULO 4</div>
+                    <div class="chapter-title">Regressão Linear Simples</div>
                 </div>
-            </a>
-
-            <a href="cap 5 - regressao multipla com duas variaveis x.html" class="card bg-white rounded-lg shadow-md overflow-hidden block">
-                <div class="bg-gradient-to-r from-red-500 to-red-600 h-2"></div>
-                <div class="p-6">
-                    <div class="text-sm font-semibold text-red-600 mb-2">CAPÍTULO 5</div>
-                    <h2 class="text-xl font-bold text-gray-800 mb-3">Regressão Múltipla</h2>
-                    <p class="text-gray-600">Análise de regressão múltipla com duas variáveis independentes.</p>
+                
+                <div class="nav-item" data-page="cap 5 - regressao multipla com duas variaveis x.html">
+                    <div class="chapter-label">CAPÍTULO 5</div>
+                    <div class="chapter-title">Regressão Múltipla</div>
                 </div>
-            </a>
-
-            <a href="cap 6 - escolha do modelo de regressao.html" class="card bg-white rounded-lg shadow-md overflow-hidden block">
-                <div class="bg-gradient-to-r from-yellow-500 to-yellow-600 h-2"></div>
-                <div class="p-6">
-                    <div class="text-sm font-semibold text-yellow-600 mb-2">CAPÍTULO 6</div>
-                    <h2 class="text-xl font-bold text-gray-800 mb-3">Escolha do Modelo de Regressão</h2>
-                    <p class="text-gray-600">Critérios e métodos para selecionar o melhor modelo de regressão.</p>
+                
+                <div class="nav-item" data-page="cap 6 - escolha do modelo de regressao.html">
+                    <div class="chapter-label">CAPÍTULO 6</div>
+                    <div class="chapter-title">Escolha do Modelo</div>
                 </div>
-            </a>
-
-            <a href="cap 7 - regressao nao linear.html" class="card bg-white rounded-lg shadow-md overflow-hidden block">
-                <div class="bg-gradient-to-r from-indigo-500 to-indigo-600 h-2"></div>
-                <div class="p-6">
-                    <div class="text-sm font-semibold text-indigo-600 mb-2">CAPÍTULO 7</div>
-                    <h2 class="text-xl font-bold text-gray-800 mb-3">Regressão Não Linear</h2>
-                    <p class="text-gray-600">Modelagem de relações não lineares entre variáveis.</p>
+                
+                <div class="nav-item" data-page="cap 7 - regressao nao linear.html">
+                    <div class="chapter-label">CAPÍTULO 7</div>
+                    <div class="chapter-title">Regressão Não Linear</div>
                 </div>
-            </a>
-
-            <a href="cap 8 - regressao logistica.html" class="card bg-white rounded-lg shadow-md overflow-hidden block">
-                <div class="bg-gradient-to-r from-pink-500 to-pink-600 h-2"></div>
-                <div class="p-6">
-                    <div class="text-sm font-semibold text-pink-600 mb-2">CAPÍTULO 8</div>
-                    <h2 class="text-xl font-bold text-gray-800 mb-3">Regressão Logística</h2>
-                    <p class="text-gray-600">Análise de variáveis dependentes categóricas através da regressão logística.</p>
+                
+                <div class="nav-item" data-page="cap 8 - regressao logistica.html">
+                    <div class="chapter-label">CAPÍTULO 8</div>
+                    <div class="chapter-title">Regressão Logística</div>
                 </div>
-            </a>
-        </div>
-    </main>
+            </nav>
+        </aside>
 
-    <footer class="bg-gray-800 text-white py-8 px-4 mt-16">
-        <div class="max-w-6xl mx-auto text-center">
-            <p class="text-gray-300">© 2024 Infográficos de Estatística. Todos os direitos reservados.</p>
-        </div>
-    </footer>
+        <main class="content">
+            <iframe id="contentFrame" src="cap 3 - Intervalo de confianca.html"></iframe>
+        </main>
+    </div>
+
+    <script>
+        const navItems = document.querySelectorAll('.nav-item');
+        const contentFrame = document.getElementById('contentFrame');
+        const sidebar = document.getElementById('sidebar');
+        const menuToggle = document.getElementById('menuToggle');
+        const overlay = document.getElementById('overlay');
+
+        navItems.forEach(item => {
+            item.addEventListener('click', () => {
+                navItems.forEach(nav => nav.classList.remove('active'));
+                item.classList.add('active');
+                
+                const page = item.getAttribute('data-page');
+                contentFrame.src = page;
+
+                if (window.innerWidth <= 768) {
+                    sidebar.classList.remove('open');
+                    overlay.classList.remove('active');
+                }
+            });
+        });
+
+        menuToggle.addEventListener('click', () => {
+            sidebar.classList.toggle('open');
+            overlay.classList.toggle('active');
+        });
+
+        overlay.addEventListener('click', () => {
+            sidebar.classList.remove('open');
+            overlay.classList.remove('active');
+        });
+    </script>
 </body>
 </html>
