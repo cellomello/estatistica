@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Infográfico: O Poder dos Testes de Hipótese</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            scroll-behavior: smooth;
+        }
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 400px;
+            margin-left: auto;
+            margin-right: auto;
+            height: 250px;
+            max-height: 300px;
+        }
+        @media (min-width: 768px) {
+            .chart-container {
+                height: 300px;
+                max-height: 350px;
+            }
+        }
+        .stat-card {
+             background-color: #f8fafc; /* Tailwind gray-50 */
+             border-left: 5px solid #00B4D8; /* Palette Light Blue */
+             padding: 1rem;
+             border-radius: 0.5rem;
+             margin-bottom: 1rem;
+             box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+             transition: transform 0.3s ease;
+        }
+        .stat-card:hover {
+            transform: translateY(-5px);
+        }
+         .section-title {
+            font-size: 1.875rem; /* text-3xl */
+            font-weight: 700; /* font-bold */
+            color: #0077B6; /* Palette Dark Blue */
+            margin-bottom: 1.5rem; /* mb-6 */
+            text-align: center;
+        }
+        .highlight {
+            color: #00B4D8; /* Palette Light Blue */
+            font-weight: 600;
+        }
+        .flow-step {
+            background-color: white;
+            border: 2px solid #90E0EF; /* Palette Lighter Blue */
+            border-radius: 0.5rem;
+            padding: 1rem;
+            text-align: center;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            flex-grow: 1;
+        }
+        .flow-arrow {
+            font-size: 2rem;
+            color: #0077B6; /* Palette Dark Blue */
+            margin: 0 1rem;
+            align-self: center;
+        }
+        /* Palette: Brilliant Blues (#0077B6, #00B4D8, #ADE8F4, #CAF0F8, #90E0EF) */
+        /* Narrative Plan: 1. Intro (What/Why), 2. Hypotheses (Ho vs Ha), 3. Process (Steps), 4. Decision (p-value vs alpha), 5. Errors (Types I/II), 6. Power, 7. Conclusion */
+        /* Visualization Choices:
+            - Section 1: Big Number (HTML), Icon (Unicode). Goal: Inform. Method: HTML/Unicode. NO SVG.
+            - Section 2: Comparison Boxes (HTML), Icons (Unicode). Goal: Compare/Organize. Method: HTML/CSS/Unicode. NO SVG.
+            - Section 3: Flow Chart (HTML/CSS divs + arrows). Goal: Organize. Method: Structured HTML/CSS with Tailwind. NO SVG, NO MERMAID JS.
+            - Section 4: Bar Chart (Chart.js Canvas), Formula (HTML). Goal: Compare/Inform. Method: Chart.js/HTML. NO SVG.
+            - Section 5: Comparison Boxes (HTML), Icons (Unicode). Goal: Compare/Organize. Method: HTML/CSS/Unicode. NO SVG.
+            - Section 6: Info Cards (HTML), Icons (Unicode). Goal: Inform/Relationships. Method: HTML/CSS/Unicode. NO SVG.
+            - Overall: Strictly adhering to NO SVG, NO Mermaid JS. Chart.js used for Section 4 visualization via Canvas. Flowchart and diagrams use HTML/CSS/Unicode. */
+        /* Mermaid JS Not Used */
+        /* SVG Not Used */
+    </style>
+</head>
+<body class="bg-[#CAF0F8] text-gray-800">
+
+    <header class="bg-[#0077B6] text-white py-6 shadow-lg sticky top-0 z-10">
+        <div class="container mx-auto px-6 text-center">
+            <h1 class="text-3xl md:text-4xl font-bold">O Poder dos Testes de Hipótese</h1>
+            <p class="mt-2 text-lg text-[#ADE8F4]">Tomando decisões informadas a partir de dados amostrais.</p>
+        </div>
+    </header>
+
+    <main class="container mx-auto px-6 py-12">
+
+        <section id="o-que-sao" class="mb-16">
+            <h2 class="section-title">🤔 O Que São Testes de Hipótese?</h2>
+            <div class="bg-white rounded-lg shadow-xl p-8 md:p-10 text-center flex flex-col md:flex-row items-center gap-8">
+                 <div class="md:w-2/3 text-left">
+                    <p class="text-lg mb-4">Imagine que você tem uma <span class="highlight">afirmação</span> sobre uma população (ex: "A altura média dos homens é 1.75m"). Como saber se ela é verdadeira usando apenas dados de uma <span class="highlight">amostra</span>?</p>
+                    <p class="text-lg mb-4">O Teste de Hipótese é um procedimento estatístico formal que nos ajuda a <span class="highlight">decidir</span> se há evidência suficiente nos dados da amostra para <span class="highlight">rejeitar</span> essa afirmação inicial.</p>
+                    <p class="text-lg mb-4">É como um julgamento: a afirmação inicial é "inocente" (verdadeira) até que a evidência (dados) prove o contrário "além de uma dúvida razoável".</p>
+                 </div>
+                 <div class="md:w-1/3 flex flex-col items-center">
+                     <div class="text-6xl text-[#00B4D8] mb-4">⚖️</div>
+                    <div class="text-xl font-semibold text-[#0077B6] mb-4">Avaliar Afirmações</div>
+                    <p class="text-sm text-gray-600">Usamos dados amostrais para tomar decisões sobre parâmetros populacionais.</p>
+                </div>
+            </div>
+        </section>
+
+        <section id="hipoteses" class="mb-16">
+            <h2 class="section-title">📜 Formulando as Hipóteses</h2>
+            <p class="text-center text-lg mb-8 max-w-3xl mx-auto">Todo teste começa com duas hipóteses opostas:</p>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <div class="bg-white rounded-lg shadow-lg p-6 text-center border-t-4 border-[#90E0EF]">
+                     <div class="text-4xl mb-3">🏛️</div>
+                    <h3 class="font-semibold text-xl mb-2 text-[#0077B6]">Hipótese Nula (H₀)</h3>
+                    <p>Representa o <span class="highlight">status quo</span>, a afirmação inicial, a ausência de efeito ou diferença. É o que assumimos como verdade até prova em contrário.</p>
+                    <p class="mt-3 font-mono bg-gray-100 p-2 rounded inline-block">Ex: H₀: μ = 10</p>
+                    <p class="text-sm text-gray-500 mt-1">(A média é igual a 10)</p>
+                </div>
+                 <div class="bg-white rounded-lg shadow-lg p-6 text-center border-t-4 border-[#00B4D8]">
+                     <div class="text-4xl mb-3">💡</div>
+                    <h3 class="font-semibold text-xl mb-2 text-[#00B4D8]">Hipótese Alternativa (H<span class="text-xs">a</span> ou H₁)</h3>
+                    <p>Representa o que o pesquisador <span class="highlight">acredita</span> ser verdade, ou o que será concluído se H₀ for rejeitada. É a hipótese que busca evidências.</p>
+                    <p class="mt-3 font-mono bg-gray-100 p-2 rounded inline-block">Ex: H<span class="text-xs">a</span>: μ ≠ 10</p>
+                    <p class="text-sm text-gray-500 mt-1">(A média é diferente de 10)</p>
+                </div>
+            </div>
+        </section>
+
+        <section id="processo" class="mb-16">
+            <h2 class="section-title">⚙️ O Processo do Teste</h2>
+            <p class="text-center text-lg mb-8 max-w-3xl mx-auto">Realizar um teste de hipótese segue etapas lógicas:</p>
+            <div class="flex flex-col md:flex-row justify-center items-stretch gap-4 md:gap-0">
+                <div class="flow-step">
+                    <div class="text-3xl mb-2">1️⃣</div>
+                    <h3 class="font-semibold mb-1">Formular Hipóteses</h3>
+                    <p class="text-sm">Definir H₀ (nula) e H<span class="text-xs">a</span> (alternativa).</p>
+                </div>
+                <div class="flow-arrow hidden md:block">→</div>
+                 <div class="flow-step mt-4 md:mt-0">
+                     <div class="text-3xl mb-2">2️⃣</div>
+                    <h3 class="font-semibold mb-1">Coletar Evidências</h3>
+                    <p class="text-sm">Calcular a <span class="highlight">Estatística de Teste</span> a partir da amostra (ex: t, z).</p>
+                </div>
+                <div class="flow-arrow hidden md:block">→</div>
+                <div class="flow-step mt-4 md:mt-0">
+                     <div class="text-3xl mb-2">3️⃣</div>
+                    <h3 class="font-semibold mb-1">Avaliar Evidências</h3>
+                    <p class="text-sm">Calcular o <span class="highlight">Valor-p</span> (probabilidade do resultado, se H₀ for verdadeira).</p>
+                </div>
+                 <div class="flow-arrow hidden md:block">→</div>
+                 <div class="flow-step mt-4 md:mt-0">
+                     <div class="text-3xl mb-2">4️⃣</div>
+                    <h3 class="font-semibold mb-1">Tomar Decisão</h3>
+                    <p class="text-sm">Comparar o Valor-p com <span class="highlight">α</span> (nível de significância) e decidir se rejeita H₀.</p>
+                </div>
+            </div>
+        </section>
+
+        <section id="decisao" class="mb-16">
+            <h2 class="section-title">✅ Tomando a Decisão: Valor-p vs. α</h2>
+            <div class="bg-white rounded-lg shadow-xl p-8 grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
+                <div>
+                    <p class="text-lg mb-4">O <span class="highlight">Valor-p</span> mede a força da evidência contra H₀. Quanto menor o valor-p, mais forte a evidência.</p>
+                    <p class="text-lg mb-4">O <span class="highlight">Nível de Significância (α)</span> é o nosso limite de "dúvida razoável", definido *antes* do teste (geralmente 5% ou 0.05).</p>
+                    <h3 class="font-semibold text-xl mb-2 text-[#0077B6]">Regra de Decisão:</h3>
+                    <div class="stat-card border-l-[#00B4D8]">
+                        <p><strong class="text-red-600">Se Valor-p &lt; α:</strong> Rejeitar H₀. A evidência é forte o suficiente.</p>
+                    </div>
+                     <div class="stat-card border-l-gray-400">
+                         <p><strong class="text-green-600">Se Valor-p ≥ α:</strong> Não Rejeitar H₀. A evidência não é forte o suficiente.</p>
+                    </div>
+                    <p class="text-sm mt-4 text-gray-600">Importante: Não rejeitar H₀ não significa provar que H₀ é verdadeira, apenas que não temos evidência suficiente para descartá-la.</p>
+                 </div>
+                 <div class="chart-container">
+                    <canvas id="pValueChart"></canvas>
+                 </div>
+            </div>
+        </section>
+
+        <section id="erros" class="mb-16">
+            <h2 class="section-title">⚠️ Erros Potenciais</h2>
+            <p class="text-center text-lg mb-8 max-w-3xl mx-auto">Nenhuma decisão baseada em amostras é 100% garantida. Existem dois tipos de erros:</p>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                 <div class="bg-red-50 rounded-lg shadow-lg p-6 text-center border-t-4 border-red-500">
+                     <div class="text-4xl mb-3">🚨</div>
+                    <h3 class="font-semibold text-xl mb-2 text-red-700">Erro Tipo I (Alarme Falso)</h3>
+                    <p>Rejeitar H₀ quando ela é, na verdade, <span class="highlight">verdadeira</span>.</p>
+                    <p class="mt-3 font-semibold">Probabilidade = α</p>
+                    <p class="text-sm text-gray-600">(Controlado pelo nível de significância escolhido)</p>
+                </div>
+                 <div class="bg-blue-50 rounded-lg shadow-lg p-6 text-center border-t-4 border-blue-500">
+                    <div class="text-4xl mb-3">🎯</div>
+                    <h3 class="font-semibold text-xl mb-2 text-blue-700">Erro Tipo II (Oportunidade Perdida)</h3>
+                    <p>Não rejeitar H₀ quando ela é, na verdade, <span class="highlight">falsa</span>.</p>
+                     <p class="mt-3 font-semibold">Probabilidade = β</p>
+                     <p class="text-sm text-gray-600">(Inversamente relacionado ao Poder do Teste)</p>
+                </div>
+            </div>
+        </section>
+
+         <section id="poder" class="mb-16">
+            <h2 class="section-title">💪 O Poder do Teste</h2>
+            <div class="bg-white rounded-lg shadow-xl p-8">
+                 <p class="text-lg mb-6 text-center">O <span class="highlight">Poder</span> de um teste é a sua capacidade de detectar corretamente uma diferença ou efeito real (ou seja, rejeitar H₀ quando H₀ é falsa).</p>
+                 <div class="text-center text-2xl font-semibold mb-6">
+                     Poder = 1 - β
+                 </div>
+                <p class="text-center font-semibold text-lg mb-4 text-[#0077B6]">Fatores que Aumentam o Poder:</p>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                     <div class="stat-card border-l-[#00B4D8]">
+                        <h3 class="font-semibold text-xl mb-2">👥 Maior Tamanho da Amostra (n)</h3>
+                        <p>Mais dados fornecem evidências mais fortes.</p>
+                    </div>
+                     <div class="stat-card border-l-[#90E0EF]">
+                        <h3 class="font-semibold text-xl mb-2">📏 Maior Magnitude da Diferença Real</h3>
+                        <p>Diferenças maiores entre o valor real e o valor em H₀ são mais fáceis de detectar.</p>
+                    </div>
+                     <div class="stat-card border-l-[#ADE8F4] md:col-span-2">
+                        <h3 class="font-semibold text-xl mb-2">📉 Menor Variabilidade nos Dados</h3>
+                        <p>Dados menos dispersos tornam as diferenças mais claras.</p>
+                    </div>
+                 </div>
+            </div>
+        </section>
+
+        <section id="conclusao-final" class="text-center border-t pt-10">
+            <h2 class="section-title">💡 Conclusão</h2>
+            <p class="text-xl max-w-3xl mx-auto text-gray-700">Testes de Hipótese são uma ferramenta fundamental na análise de dados. Eles fornecem um método <span class="highlight">estruturado</span> e <span class="highlight">objetivo</span> para usar evidências amostrais na avaliação de afirmações sobre populações, ajudando-nos a tomar decisões mais confiáveis em diversas áreas.</p>
+        </section>
+
+    </main>
+
+    <footer class="bg-[#0077B6] text-white text-center py-4 mt-12">
+        <p class="text-sm">&copy; 2025 Infográfico Estatístico. Baseado no Capítulo 3 de "Estatística II Para Leigos".</p>
+    </footer>
+
+    <script>
+        function wrapLabel(str, maxWidth) {
+            if (str === null || str === undefined) return '';
+            str = String(str);
+            if (str.length <= maxWidth) return str;
+            const words = str.split(' ');
+            let lines = [];
+            let currentLine = '';
+            words.forEach(word => {
+                if ((currentLine + word).length <= maxWidth) {
+                    currentLine += (currentLine === '' ? '' : ' ') + word;
+                } else {
+                    lines.push(currentLine);
+                    currentLine = word;
+                }
+            });
+            lines.push(currentLine);
+            return lines;
+        }
+
+        const ctxPValue = document.getElementById('pValueChart').getContext('2d');
+        const alphaLevel = 0.05;
+        const pValueExampleReject = 0.02;
+        const pValueExampleFail = 0.15;
+
+        new Chart(ctxPValue, {
+            type: 'bar',
+            data: {
+                labels: [wrapLabel('Exemplo 1 (Rejeitar H₀)', 16), wrapLabel('Exemplo 2 (Não Rejeitar H₀)', 16)],
+                datasets: [
+                    {
+                        label: 'Valor-p',
+                        data: [pValueExampleReject, pValueExampleFail],
+                        backgroundColor: ['#FF6B6B', '#06D6A0'], // Using colors from the other palette for contrast here
+                         borderColor: ['#BF4141', '#048C6A'],
+                         borderWidth: 1
+                    },
+                    {
+                        label: 'Nível α (0.05)',
+                        data: [alphaLevel, alphaLevel],
+                        backgroundColor: 'rgba(100, 100, 100, 0.3)',
+                         borderColor: 'rgba(100, 100, 100, 0.5)',
+                         borderWidth: 1,
+                         type: 'line', // Show alpha as a line threshold
+                         fill: false,
+                         pointRadius: 0,
+                         borderDash: [5, 5] // Dashed line for alpha
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        max: Math.max(alphaLevel, pValueExampleReject, pValueExampleFail) * 1.5, // Adjust max for visibility
+                        title: {
+                            display: true,
+                            text: 'Probabilidade'
+                        }
+                    },
+                    x: {
+                       ticks: {
+                           autoSkip: false
+                       }
+                    }
+                },
+                plugins: {
+                    legend: {
+                        display: true,
+                        position: 'bottom',
+                    },
+                     tooltip: {
+                         callbacks: {
+                            title: function(tooltipItems) {
+                                const item = tooltipItems[0];
+                                let label = item.chart.data.labels[item.dataIndex];
+                                if (Array.isArray(label)) {
+                                  return label.join(' ');
+                                } else {
+                                  return label;
+                                }
+                            },
+                            label: function(context) {
+                                let label = context.dataset.label || '';
+                                if (label) {
+                                    label += ': ';
+                                }
+                                if (context.parsed.y !== null) {
+                                    label += context.parsed.y.toFixed(3);
+                                }
+                                // Add comparison result
+                                if (context.datasetIndex === 0) { // Only for p-value bars
+                                     const pVal = context.parsed.y;
+                                     if (pVal < alphaLevel) {
+                                         label += ` (< ${alphaLevel}, Rejeitar H₀)`;
+                                     } else {
+                                         label += ` (≥ ${alphaLevel}, Não Rejeitar H₀)`;
+                                     }
+                                }
+                                return label;
+                            }
+                        }
+                    }
+                }
+            }
+        });
+    </script>
+
+</body>
+</html>

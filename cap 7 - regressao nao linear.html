@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Infográfico: Regressão Não Linear</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            scroll-behavior: smooth;
+            background-color: #f8fafc; /* Lighter gray background */
+        }
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+            height: 350px;
+            max-height: 450px;
+        }
+         @media (max-width: 768px) {
+            .chart-container {
+                 height: 300px;
+                 max-height: 400px;
+            }
+        }
+        .material-card {
+             background-color: white;
+             border-radius: 0.75rem;
+             box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+             padding: 1.5rem; /* p-6 */
+             margin-bottom: 1.5rem; /* mb-6 */
+             transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .material-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
+        }
+         .section-title {
+            font-size: 2rem; /* text-3xl approx */
+            font-weight: 700; /* font-bold */
+            color: #0077B6; /* Palette Mid Blue */
+            margin-bottom: 2rem; /* mb-8 */
+            text-align: center;
+            padding-bottom: 0.75rem;
+            border-bottom: 3px solid #90E0EF; /* Palette Light Blue */
+            display: inline-block;
+        }
+        .section-container {
+            text-align: center;
+             margin-bottom: 4rem; /* mb-16 */
+        }
+        .highlight {
+             color: #00B4D8; /* Palette Cyan */
+             font-weight: 600;
+        }
+        .step-icon {
+            font-size: 1.5rem; /* Larger icon */
+            margin-right: 0.75rem;
+            color: #0077B6; /* Palette Mid Blue */
+        }
+        .flow-arrow {
+            font-size: 1.5rem;
+            color: #90E0EF; /* Light blue arrow */
+            margin: 0 0.5rem;
+        }
+        .flow-step {
+            background-color: #CAF0F8; /* Very light blue */
+            padding: 0.75rem 1rem;
+            border-radius: 0.5rem;
+            display: inline-block;
+            margin: 0.25rem;
+            font-size: 0.9rem;
+            color: #03045E; /* Dark Navy */
+            border: 1px solid #90E0EF;
+        }
+        .code-snippet {
+            background-color: #eefbff; /* Very light blue */
+            padding: 0.5rem 1rem;
+            border-radius: 0.375rem;
+            font-family: monospace;
+            font-size: 0.875rem;
+            color: #03045E; /* Dark Navy */
+            border-left: 3px solid #0077B6;
+            margin-top: 0.5rem;
+            display: block;
+            overflow-x: auto;
+        }
+        /* Palette: Brilliant Blues (#CAF0F8, #90E0EF, #00B4D8, #0077B6, #03045E) */
+        /* Narrative Plan: 1. Intro (What/When), 2. Visualize First (Scatter), 3. Model Types (Poly/Expo), 4. Finding Best (Process), 5. Evaluation (Fit/R²/Resid), 6. Usage (Predict/Extrapolate Caution), 7. Conclusion */
+        /* Visualization Choices:
+            - Section 2: Mock curved scatter plot. Goal: Relationships. Method: Chart.js Scatter (Canvas). NO SVG. Justification: Show the need for curves.
+            - Section 3: Icons for Poly (🎢) and Expo (📈📉). Goal: Inform. Method: Unicode/HTML. NO SVG. Justification: Simple visual cues.
+            - Section 4: Flow diagram using HTML/CSS/Arrows(➡️). Goal: Organize. Method: HTML/CSS/Unicode. NO SVG/NO Mermaid. Justification: Illustrate process.
+            - Section 5: Icons for Eval (✔️, 🎯, 🔍). Mock 'good' residual plot. Goal: Inform/Compare. Method: Unicode/HTML + Chart.js Scatter (Canvas). NO SVG. Justification: Explain criteria & show ideal residual pattern.
+            - Section 6: Icons for Predict (🧮) and Caution (🚫). Goal: Inform. Method: Unicode/HTML. NO SVG. Justification: Simple cues.
+            - Overall: Strictly NO SVG, NO Mermaid. Charts via Canvas. Diagrams via HTML/CSS/Unicode. */
+        /* Mermaid JS Not Used */
+        /* SVG Not Used */
+    </style>
+</head>
+<body class="bg-[#f8fafc] text-[#03045E]">
+
+    <header class="bg-[#0077B6] text-white py-6 shadow-lg sticky top-0 z-10">
+        <div class="container mx-auto px-6 text-center">
+            <h1 class="text-3xl md:text-4xl font-bold">Regressão Não Linear</h1>
+            <p class="mt-2 text-lg text-[#CAF0F8]">Modelando as Curvas da Vida: Quando a Reta Não Basta</p>
+        </div>
+    </header>
+
+    <main class="container mx-auto px-6 py-12">
+
+        <section id="o-que-e" class="section-container">
+            <h2 class="section-title">🤔 O Que É & Quando Usar?</h2>
+            <div class="material-card max-w-4xl mx-auto text-left space-y-4">
+                <p>A <span class="highlight font-semibold">Regressão Não Linear</span> entra em cena quando a relação entre duas variáveis quantitativas (X e Y) segue um <span class="font-bold text-[#0077B6]">padrão curvo</span>.</p>
+                <p>Se o seu diagrama de dispersão mostra uma curva clara, tentar ajustar uma linha reta (regressão linear simples) resultará num modelo inadequado. Precisamos de modelos que representem essas curvas!</p>
+                <p class="font-semibold text-[#0077B6]">Exemplos Comuns:</p>
+                <ul class="list-disc list-inside ml-4 text-sm space-y-1">
+                    <li>Rendimento de combustível vs. Velocidade (U invertido)</li>
+                    <li>Curvas de aprendizagem (decaimento rápido no início)</li>
+                    <li>Crescimento populacional (aumento exponencial)</li>
+                    <li>Difusão de um boato (crescimento exponencial)</li>
+                </ul>
+            </div>
+        </section>
+
+        <section id="visualizar" class="section-container">
+            <h2 class="section-title">📊 Visualize Primeiro: O Diagrama de Dispersão é Rei!</h2>
+            <p class="text-center text-lg mb-8 max-w-3xl mx-auto">Antes de escolher um modelo, <span class="font-bold">sempre</span> olhe para o gráfico dos seus dados (X vs Y).</p>
+            <div class="material-card max-w-4xl mx-auto">
+                 <p class="text-left mb-4">Se os pontos formam uma curva, a regressão linear simples não é a melhor opção, <span class="underline">mesmo que a correlação (r) pareça alta</span>. A correlação mede apenas a força da relação <span class="font-bold text-[#0077B6]">linear</span>.</p>
+                <div class="chart-container">
+                    <canvas id="scatterPlotCurve"></canvas>
+                </div>
+                <p class="text-center text-xs text-gray-500 mt-2">Um diagrama de dispersão mostrando um padrão curvo claro, indicando a necessidade de regressão não linear.</p>
+            </div>
+        </section>
+
+        <section id="tipos-modelos" class="section-container">
+            <h2 class="section-title">🎢📈📉 Tipos de Curvas (Modelos)</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-5xl mx-auto text-left">
+                <div class="material-card border-t-4 border-[#00B4D8]">
+                    <h3 class="font-semibold text-xl mb-3 text-[#0077B6]">Modelos Polinomiais</h3>
+                    <p class="mb-2">Usados para curvas que mudam de direção ("altos e baixos"). Utilizam potências de X (X², X³, etc.).</p>
+                    <p class="text-sm"><span class="font-bold">Quadrático (2º Grau):</span> <code class="code-snippet">y = b₀ + b₁x + b₂x²</code> (Forma U ou U invertido 🎢)</p>
+                    <p class="text-sm mt-2"><span class="font-bold">Cúbico (3º Grau):</span> <code class="code-snippet">y = b₀ + b₁x + b₂x² + b₃x³</code> (Forma S)</p>
+                     <p class="text-xs mt-2 italic">Comece simples (quadrático) antes de tentar graus mais altos!</p>
+                </div>
+                <div class="material-card border-t-4 border-[#90E0EF]">
+                    <h3 class="font-semibold text-xl mb-3 text-[#0077B6]">Modelos Exponenciais</h3>
+                    <p class="mb-2">Usados quando Y cresce ou decai a uma taxa <span class="font-bold">acelerada</span>.</p>
+                    <p class="text-sm"><span class="font-bold">Crescimento:</span> <code class="code-snippet">y = α * β^x</code> (com β > 1) ou <code class="code-snippet">y = α * e^(βx)</code> (com β > 0) 📈</p>
+                    <p class="text-sm mt-2"><span class="font-bold">Decaimento:</span> <code class="code-snippet">y = α * β^x</code> (com 0 < β < 1) ou <code class="code-snippet">y = α * e^(βx)</code> (com β < 0) 📉</p>
+                    <p class="text-xs mt-2 italic">Frequentemente linearizados usando log(Y) para facilitar o ajuste.</p>
+                </div>
+            </div>
+        </section>
+
+        <section id="encontrar-modelo" class="section-container">
+            <h2 class="section-title">🗺️ Encontrando o Melhor Modelo</h2>
+            <div class="material-card max-w-4xl mx-auto text-left">
+                <h3 class="font-semibold text-xl mb-4 text-[#0077B6]">O Processo Geral:</h3>
+                <div class="flex flex-col items-center space-y-2 text-center mb-6">
+                    <div class="flow-step">1. Ver Diagrama 📊</div>
+                    <div class="text-[#90E0EF]">⬇️</div>
+                    <div class="flow-step">2. Padrão Curvo? 🤔</div>
+                     <div class="text-[#90E0EF]">⬇️ Sim</div>
+                    <div class="flow-step">3. Identificar Tipo (Poli/Expo)? 🎢📈</div>
+                     <div class="text-[#90E0EF]">⬇️</div>
+                    <div class="flex flex-wrap justify-center">
+                         <div class="flow-step">4a. (Poli) Começar Simples, Ajustar, Avaliar ✅</div>
+                         <div class="flow-arrow font-bold">OU</div>
+                         <div class="flow-step">4b. (Expo) Linearizar (log Y), Ajustar Reta, Transformar Volta, Avaliar ✅</div>
+                    </div>
+                </div>
+                <p class="mb-2"><span class="font-bold">Polinomiais:</span> Comece com o modelo linear. Se não servir, tente o quadrático. Use software para encontrar os coeficientes (`b₀, b₁, b₂`, etc.). Avalie o ajuste antes de prosseguir para graus mais altos (evite *overfitting*!).</p>
+                <p><span class="font-bold">Exponenciais:</span> Use software para transformar Y em `log(Y)`, ajustar uma reta a `log(Y)` vs X, e então transformar a equação da reta de volta para a forma exponencial original.</p>
+                 <p class="mt-4 text-center font-semibold text-[#0077B6]">Priorize sempre a simplicidade (parcimónia)!</p>
+            </div>
+        </section>
+
+        <section id="avaliar-ajuste" class="section-container">
+            <h2 class="section-title">✅ Avaliando o Ajuste: Serve Bem?</h2>
+            <p class="text-center text-lg mb-8 max-w-3xl mx-auto">Um modelo só é útil se representar bem os dados. Verifique estes pontos:</p>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-6xl mx-auto text-left">
+                <div class="material-card">
+                    <h3 class="font-semibold text-lg mb-2 flex items-center"><span class="step-icon">✔️</span>Ajuste Visual</h3>
+                    <p class="text-sm">A curva do modelo (polinomial ou exponencial) deve seguir de perto os pontos no diagrama de dispersão original.</p>
+                </div>
+                <div class="material-card">
+                     <h3 class="font-semibold text-lg mb-2 flex items-center"><span class="step-icon">🎯</span>R² Ajustado Alto</h3>
+                    <p class="text-sm">Indica que o modelo explica uma alta percentagem da variação em Y, penalizando a complexidade. (Para exponenciais, olhe o R² ajustado do modelo linearizado).</p>
+                </div>
+                <div class="material-card lg:col-span-1">
+                    <h3 class="font-semibold text-lg mb-2 flex items-center"><span class="step-icon">🔍</span>Análise de Resíduos (Crucial!)</h3>
+                    <p class="text-sm">Os erros (`y - ŷ`) devem parecer <span class="font-bold">ruído aleatório</span> sem padrões.</p>
+                </div>
+            </div>
+             <div class="material-card max-w-4xl mx-auto mt-8">
+                <h3 class="font-semibold text-xl mb-4 text-[#0077B6] text-center">O Que Procurar nos Resíduos:</h3>
+                 <div class="chart-container mx-auto mb-4">
+                    <canvas id="residualPlotGood"></canvas>
+                </div>
+                <ul class="list-disc list-inside ml-4 text-sm space-y-1 text-left">
+                     <li><span class="font-bold text-[#00B4D8]">Dispersão Aleatória:</span> Pontos espalhados em torno de zero, sem formas (curvas, funis).</li>
+                     <li><span class="font-bold text-[#00B4D8]">Normalidade (Aprox.):</span> Histograma dos resíduos deve lembrar um sino.</li>
+                     <li><span class="font-bold text-[#00B4D8]">Variância Constante:</span> A "largura" da nuvem de pontos deve ser similar ao longo do eixo X.</li>
+                     <li><span class="font-bold text-[#00B4D8]">Independência:</span> Sem padrões sequenciais (importante se dados são temporais).</li>
+                 </ul>
+                 <p class="text-center text-xs text-gray-500 mt-2">Gráfico de resíduos vs. valores ajustados mostrando um padrão aleatório desejável.</p>
+            </div>
+        </section>
+
+        <section id="uso-cuidados" class="section-container">
+            <h2 class="section-title">🚀 Usando o Modelo & Cuidados</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-5xl mx-auto text-left">
+                <div class="material-card border-l-4 border-[#00B4D8]">
+                     <h3 class="font-semibold text-lg mb-2 flex items-center"><span class="step-icon">🧮</span>Fazer Previsões (`ŷ`)</h3>
+                    <p>Substitua um valor de X <span class="font-bold">dentro do intervalo original dos dados</span> na equação final do seu modelo não linear para obter a previsão de Y (`ŷ`).</p>
+                    <p class="mt-2 text-sm">Exemplo (Polinomial Quadrático):</p>
+                    <code class="code-snippet">Se ŷ = 9.8 - 6.1*X + 1.0*X² e X=5, <br> então ŷ = 9.8 - 6.1*5 + 1.0*(5²) = 4.3</code>
+                </div>
+                 <div class="material-card border-l-4 border-red-500">
+                    <h3 class="font-semibold text-lg mb-2 flex items-center"><span class="step-icon text-red-500">🚫</span>Cuidado: Extrapolação!</h3>
+                    <p>NÃO use o modelo para prever Y para valores de X <span class="font-bold text-red-600">muito fora</span> do intervalo dos dados originais.</p>
+                    <p class="mt-2 text-sm italic">A curva pode mudar drasticamente fora da faixa observada, tornando as previsões inválidas!</p>
+                </div>
+            </div>
+        </section>
+
+        <section id="conclusao-final" class="section-container border-t pt-10 mt-10">
+            <h2 class="section-title">💡 Conclusão</h2>
+            <p class="text-xl max-w-3xl mx-auto text-[#03045E]">A Regressão Não Linear expande as nossas ferramentas para modelar relações <span class="highlight">curvas</span> entre variáveis. Identificar o padrão visualmente, escolher o tipo de modelo certo (Polinomial ou Exponencial), usar software para o ajuste (e linearização, se necessário), e <span class="font-bold text-[#0077B6]">avaliar rigorosamente o ajuste</span> através de R² Ajustado e análise de resíduos são passos cruciais antes de fazer previsões confiáveis.</p>
+        </section>
+
+    </main>
+
+    <footer class="bg-[#0077B6] text-white text-center py-4 mt-12">
+        <p class="text-sm text-[#CAF0F8]">&copy; 2025 Infográfico Estatístico. Baseado no Capítulo 7 de "Estatística II Para Leigos".</p>
+    </footer>
+
+    <script>
+       // Helper function for label wrapping (already defined in previous response, included for completeness)
+        function wrapLabel(str, maxWidth) {
+           // ... (implementation as before) ...
+            if (str === null || str === undefined) return '';
+            str = String(str);
+            if (str.length <= maxWidth) return str;
+            const words = str.split(' ');
+            let lines = [];
+            let currentLine = '';
+            words.forEach(word => {
+                if ((currentLine + word).length <= maxWidth) {
+                    currentLine += (currentLine === '' ? '' : ' ') + word;
+                } else {
+                    lines.push(currentLine);
+                    currentLine = word;
+                }
+            });
+            lines.push(currentLine);
+            return lines;
+        }
+
+       // Tooltip callback (already defined, included for completeness)
+       const tooltipTitleCallback = (tooltipItems) => {
+           const item = tooltipItems[0];
+           let label = item.chart.data.labels[item.dataIndex];
+           if (Array.isArray(label)) {
+             return label.join(' ');
+           } else {
+             return String(label); // Ensure string
+           }
+       };
+
+        // --- Chart 1: Scatter Plot with Curve ---
+        const ctxScatterCurve = document.getElementById('scatterPlotCurve').getContext('2d');
+        // Mock data representing a curve (e.g., quadratic or exponential trend)
+        const scatterDataCurve = [
+            {x: 1, y: 2.5}, {x: 1.5, y: 3.8}, {x: 2, y: 5.5}, {x: 2.5, y: 7.8},
+            {x: 3, y: 10.5}, {x: 3.5, y: 13.8}, {x: 4, y: 17.5}, {x: 4.5, y: 21.8},
+            {x: 5, y: 26.5}, {x: 5.5, y: 31.8}, {x: 6, y: 37.5}
+        ];
+        // Generate points for a smooth curve (e.g., y = 1 + x^2)
+        const curveLineData = [];
+        for (let x = 1; x <= 6; x += 0.1) {
+             // Example curve: y = approx 1 + 1*x^2 (adjust visually)
+             curveLineData.push({x: x, y: 1 + 1.1 * (x*x) });
+        }
+
+        new Chart(ctxScatterCurve, {
+            type: 'scatter',
+            data: {
+                datasets: [{
+                    label: 'Dados Observados',
+                    data: scatterDataCurve,
+                    backgroundColor: '#0077B6', // Mid Blue points
+                    pointRadius: 5,
+                    pointHoverRadius: 7,
+                    order: 1 // Draw points on top
+                }, {
+                    label: 'Tendência Curva (Modelo Não Linear)',
+                    data: curveLineData,
+                    borderColor: '#FF6B6B', // Use a contrasting color (from prev example, ok for illustration)
+                    borderWidth: 2,
+                    type: 'line', // Overlay a line
+                    fill: false,
+                    pointRadius: 0, // No points for the trend line
+                    tension: 0.1, // Slight smoothing
+                    order: 0
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    x: {
+                        type: 'linear',
+                        position: 'bottom',
+                        title: { display: true, text: 'Variável X' }
+                    },
+                    y: {
+                        title: { display: true, text: 'Variável Y' },
+                        beginAtZero: true
+                    }
+                },
+                plugins: {
+                    tooltip: { callbacks: { title: tooltipTitleCallback } },
+                    legend: { display: true, position: 'bottom' }
+                }
+            }
+        });
+
+        // --- Chart 2: Good Residual Plot ---
+        const ctxResidualGood = document.getElementById('residualPlotGood').getContext('2d');
+        // Mock residual data: random scatter around 0, constant variance
+        const residualDataGood = [
+            {x: 10, y: 0.5}, {x: 12, y: -0.8}, {x: 15, y: 1.2}, {x: 18, y: -0.1},
+            {x: 20, y: 0.9}, {x: 22, y: -1.5}, {x: 25, y: 0.3}, {x: 28, y: 1.0},
+            {x: 30, y: -0.6}, {x: 33, y: -0.9}, {x: 35, y: 1.4}, {x: 38, y: 0.0},
+            {x: 40, y: -1.1}, {x: 42, y: 0.7}, {x: 45, y: -0.3}
+        ];
+
+        new Chart(ctxResidualGood, {
+            type: 'scatter',
+            data: {
+                datasets: [{
+                    label: 'Resíduos (y - ŷ)',
+                    data: residualDataGood,
+                    backgroundColor: '#0077B6', // Mid Blue
+                    pointRadius: 5,
+                    pointHoverRadius: 7
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                 scales: {
+                    x: {
+                        type: 'linear',
+                        position: 'bottom',
+                        title: { display: true, text: 'Valores Ajustados (ŷ) ou Variável X' }
+                    },
+                    y: {
+                        title: { display: true, text: 'Resíduos' },
+                        // Add a line at y=0
+                         grid: {
+                            color: (context) => context.tick.value === 0 ? '#FF6B6B' : 'rgba(0, 0, 0, 0.1)', // Highlight y=0 line
+                            lineWidth: (context) => context.tick.value === 0 ? 2 : 1,
+                        },
+                        ticks: {
+                             callback: function(value, index, values) {
+                                return value;
+                            }
+                        },
+                         suggestedMin: -2.5, // Adjust based on data range
+                        suggestedMax: 2.5
+                    }
+                },
+                plugins: {
+                    tooltip: { callbacks: { title: tooltipTitleCallback } },
+                    legend: { display: false } // No legend needed for residuals
+                }
+            }
+        });
+
+    </script>
+
+</body>
+</html>

@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Infográfico: Desvendando os Intervalos de Confiança</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            scroll-behavior: smooth;
+        }
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+            height: 150px;
+            max-height: 200px;
+        }
+        @media (min-width: 768px) {
+            .chart-container {
+                height: 200px;
+                max-height: 250px;
+            }
+        }
+        .stat-card {
+             background-color: #f8fafc; /* Tailwind gray-50 */
+             border-left: 5px solid #118AB2; /* Palette Blue */
+             padding: 1rem;
+             border-radius: 0.5rem;
+             margin-bottom: 1rem;
+             box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+        }
+         .section-title {
+            font-size: 1.875rem; /* text-3xl */
+            font-weight: 700; /* font-bold */
+            color: #073B4C; /* Palette Dark Blue */
+            margin-bottom: 1.5rem; /* mb-6 */
+            text-align: center;
+        }
+        .highlight {
+            color: #FF6B6B; /* Palette Red */
+            font-weight: 600;
+        }
+        /* Palette: Energetic & Playful (#FF6B6B, #FFD166, #06D6A0, #118AB2, #073B4C) */
+        /* Narrative Plan: 1. Intro (What/Why), 2. Anatomy (Formula), 3. Margin of Error Factors, 4. Calculation Example (Mean), 5. Interpretation (Do/Don't), 6. Conclusion */
+        /* Visualization Choices:
+            - Section 1: Big Number (HTML), Icon (Unicode). Goal: Inform. NO SVG.
+            - Section 2: Formula Structure (HTML). Goal: Organize. NO SVG.
+            - Section 3: Factor Cards (HTML), Icons (Unicode), Arrows (Unicode). Goal: Organize/Relationships. NO SVG.
+            - Section 4: Formula Structure (HTML), Bar Chart with Error Bars (Chart.js Canvas). Goal: Inform/Compare. NO SVG.
+            - Section 5: Interpretation Boxes (HTML), Interval Width Visual (HTML divs). Goal: Inform/Compare. NO SVG.
+            - Overall: Strictly adhering to NO SVG, NO Mermaid JS. Chart.js used for Section 4 visualization via Canvas. */
+        /* Mermaid JS Not Used */
+        /* SVG Not Used */
+    </style>
+</head>
+<body class="bg-gradient-to-br from-blue-50 via-gray-50 to-green-50 text-gray-800">
+
+    <header class="bg-[#073B4C] text-white py-6 shadow-md">
+        <div class="container mx-auto px-6 text-center">
+            <h1 class="text-3xl md:text-4xl font-bold">Desvendando os Intervalos de Confiança</h1>
+            <p class="mt-2 text-lg text-gray-300">Entenda como estimar parâmetros populacionais com precisão.</p>
+        </div>
+    </header>
+
+    <main class="container mx-auto px-6 py-12">
+
+        <section id="o-que-sao" class="mb-16">
+            <h2 class="section-title">📊 O Que São Intervalos de Confiança?</h2>
+            <div class="bg-white rounded-lg shadow-xl p-8 md:p-10 text-center flex flex-col md:flex-row items-center gap-8">
+                 <div class="md:w-2/3 text-left">
+                    <p class="text-lg mb-4">Em estatística, raramente conhecemos o valor exato de um parâmetro de toda a população (como a média de altura de todos os brasileiros). Em vez disso, usamos dados de uma <span class="highlight">amostra</span> para estimá-lo.</p>
+                    <p class="text-lg mb-4">Um <span class="highlight">Intervalo de Confiança</span> não fornece apenas um número, mas sim uma <span class="highlight">faixa de valores plausíveis</span> onde acreditamos que o verdadeiro parâmetro da população se encontra.</p>
+                    <p class="text-lg mb-4">Isso é crucial porque amostras diferentes dariam resultados ligeiramente diferentes (variabilidade amostral). O intervalo leva essa incerteza em conta.</p>
+                 </div>
+                 <div class="md:w-1/3 flex flex-col items-center">
+                    <div class="text-6xl font-bold text-[#FF6B6B] mb-2">95%</div>
+                    <div class="text-xl font-semibold text-[#118AB2] mb-4">Nível de Confiança Comum</div>
+                    <p class="text-sm text-gray-600">Representa a taxa de sucesso do método a longo prazo em capturar o parâmetro real.</p>
+                </div>
+            </div>
+        </section>
+
+        <section id="anatomia" class="mb-16">
+            <h2 class="section-title">🔬 Anatomia de um Intervalo</h2>
+             <p class="text-center text-lg mb-8 max-w-3xl mx-auto">A estrutura básica de qualquer intervalo de confiança é surpreendentemente simples:</p>
+            <div class="bg-white rounded-lg shadow-xl p-8 text-center">
+                <div class="text-2xl md:text-3xl font-semibold">
+                    <span class="text-[#06D6A0]">Estimativa Pontual</span>
+                    <span class="text-[#073B4C] mx-2"> ± </span>
+                    <span class="text-[#FFD166]">Margem de Erro</span>
+                </div>
+                <div class="mt-6 grid grid-cols-1 md:grid-cols-2 gap-6 text-left">
+                    <div class="stat-card border-l-[#06D6A0]">
+                        <h3 class="font-semibold text-xl mb-2 text-[#06D6A0]">Estimativa Pontual</h3>
+                        <p>Sua melhor estimativa do parâmetro, calculada a partir da amostra (ex: média da amostra).</p>
+                    </div>
+                     <div class="stat-card border-l-[#FFD166]">
+                        <h3 class="font-semibold text-xl mb-2 text-[#FFD166]">Margem de Erro</h3>
+                        <p>Quantifica a incerteza da estimativa. Mostra o quanto esperamos que a estimativa varie se repetirmos o estudo com outra amostra. Define a "largura" do intervalo.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="margem-erro" class="mb-16">
+            <h2 class="section-title">⚙️ Fatores que Afetam a Margem de Erro</h2>
+            <p class="text-center text-lg mb-8 max-w-3xl mx-auto">A largura do seu intervalo (sua precisão) depende de três fatores principais:</p>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <div class="bg-white rounded-lg shadow-lg p-6 text-center transition-transform transform hover:scale-105">
+                     <div class="text-4xl mb-3">⚖️</div>
+                    <h3 class="font-semibold text-xl mb-2 text-[#118AB2]">Nível de Confiança</h3>
+                    <p class="mb-3">Maior confiança exige um intervalo <span class="highlight">mais largo</span> (maior margem de erro) para ter mais certeza de capturar o parâmetro.</p>
+                    <p class="font-mono text-[#118AB2]">↑ Confiança  <span class="text-xl">➡️</span> ↑ Largura</p>
+                </div>
+                 <div class="bg-white rounded-lg shadow-lg p-6 text-center transition-transform transform hover:scale-105">
+                    <div class="text-4xl mb-3">↔️</div>
+                    <h3 class="font-semibold text-xl mb-2 text-[#FF6B6B]">Variabilidade nos Dados</h3>
+                    <p class="mb-3">Dados mais dispersos (maior desvio padrão) levam a um intervalo <span class="highlight">mais largo</span> (maior margem de erro).</p>
+                     <p class="font-mono text-[#FF6B6B]">↑ Variabilidade <span class="text-xl">➡️</span> ↑ Largura</p>
+                </div>
+                 <div class="bg-white rounded-lg shadow-lg p-6 text-center transition-transform transform hover:scale-105">
+                     <div class="text-4xl mb-3">👥</div>
+                    <h3 class="font-semibold text-xl mb-2 text-[#06D6A0]">Tamanho da Amostra (n)</h3>
+                    <p class="mb-3">Amostras maiores fornecem mais informação, resultando em um intervalo <span class="highlight">mais estreito</span> (menor margem de erro).</p>
+                     <p class="font-mono text-[#06D6A0]">↑ Tamanho Amostra <span class="text-xl">➡️</span> ↓ Largura</p>
+                </div>
+            </div>
+        </section>
+
+         <section id="calculando" class="mb-16">
+            <h2 class="section-title">🧮 Calculando (Exemplo: Média)</h2>
+            <div class="bg-white rounded-lg shadow-xl p-8">
+                 <p class="text-lg mb-6 text-center">Uma fórmula comum é para estimar a média populacional (μ) quando o desvio padrão da população (σ) é desconhecido:</p>
+                 <div class="bg-gray-100 rounded p-6 mb-6 text-center font-mono text-xl md:text-2xl break-words">
+                     <span class="text-[#118AB2] font-bold">x̄</span> ± <span class="text-[#FFD166] font-bold">t*</span> ( <span class="text-[#06D6A0] font-bold">s</span> / <span class="text-[#FF6B6B] font-bold">√n</span> )
+                 </div>
+                 <div class="grid grid-cols-2 md:grid-cols-4 gap-4 text-center mb-6">
+                     <div><span class="text-[#118AB2] font-bold text-2xl">x̄</span><p class="text-sm">Média Amostral</p></div>
+                     <div><span class="text-[#FFD166] font-bold text-2xl">t*</span><p class="text-sm">Valor Crítico t (da tabela)</p></div>
+                     <div><span class="text-[#06D6A0] font-bold text-2xl">s</span><p class="text-sm">Desvio Padrão Amostral</p></div>
+                     <div><span class="text-[#FF6B6B] font-bold text-2xl">n</span><p class="text-sm">Tamanho da Amostra</p></div>
+                 </div>
+                <p class="text-center text-lg mb-4">Visualização do Intervalo:</p>
+                <div class="chart-container">
+                    <canvas id="meanChart"></canvas>
+                </div>
+                 <p class="text-center text-sm text-gray-600 mt-2">O gráfico ilustra a média amostral (ponto central) e a faixa (intervalo) dada pela margem de erro.</p>
+             </div>
+        </section>
+
+        <section id="interpretacao" class="mb-16">
+            <h2 class="section-title">🤔 Interpretando Corretamente</h2>
+            <p class="text-center text-lg mb-8 max-w-3xl mx-auto">A interpretação é crucial e muitas vezes mal compreendida.</p>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                 <div class="bg-green-100 border-l-4 border-green-500 text-green-700 p-6 rounded-lg shadow-md">
+                    <h3 class="font-bold text-xl mb-2">✅ Interpretação Correta:</h3>
+                    <p>"Estamos 95% confiantes de que o <span class="font-semibold">verdadeiro valor do parâmetro populacional</span> está contido neste intervalo [A, B]."</p>
+                    <p class="mt-2 text-sm">(Foco na confiança no *método* usado para gerar o intervalo a longo prazo).</p>
+                </div>
+                 <div class="bg-red-100 border-l-4 border-red-500 text-red-700 p-6 rounded-lg shadow-md">
+                    <h3 class="font-bold text-xl mb-2">❌ Interpretação Incorreta Comum:</h3>
+                    <p>"Há uma probabilidade de 95% de que o parâmetro populacional esteja neste intervalo [A, B] específico."</p>
+                    <p class="mt-2 text-sm">(Errado! Uma vez calculado, o intervalo específico ou contém o parâmetro ou não; a probabilidade é 0 ou 1, não 95%).</p>
+                </div>
+            </div>
+             <div class="mt-10 text-center">
+                 <h3 class="font-semibold text-xl mb-4 text-[#073B4C]">Precisão e Largura:</h3>
+                 <div class="flex justify-center items-center gap-6 flex-wrap">
+                     <div class="text-center">
+                         <div class="h-4 bg-[#FFD166] rounded w-24 mx-auto mb-1"></div>
+                         <p class="text-sm font-semibold text-[#FFD166]">Intervalo Estreito</p>
+                         <p class="text-xs text-gray-600">(Maior Precisão)</p>
+                     </div>
+                     <div class="text-center">
+                         <div class="h-4 bg-[#FF6B6B] rounded w-48 mx-auto mb-1"></div>
+                         <p class="text-sm font-semibold text-[#FF6B6B]">Intervalo Largo</p>
+                         <p class="text-xs text-gray-600">(Menor Precisão)</p>
+                     </div>
+                 </div>
+                 <p class="mt-4 text-lg">Intervalos mais estreitos indicam estimativas mais precisas.</p>
+             </div>
+        </section>
+
+        <section id="conclusao" class="text-center border-t pt-10">
+            <h2 class="section-title">🎯 Conclusão</h2>
+            <p class="text-xl max-w-3xl mx-auto text-gray-700">Intervalos de Confiança são ferramentas essenciais na estatística inferencial. Eles nos permitem ir além da estimativa pontual, fornecendo uma medida de <span class="highlight">incerteza</span> e <span class="highlight">precisão</span> ao estimar características importantes de uma população a partir de dados amostrais.</p>
+        </section>
+
+    </main>
+
+    <footer class="bg-[#073B4C] text-white text-center py-4 mt-12">
+        <p class="text-sm">&copy; 2025 Infográfico Estatístico. Baseado no Capítulo 3 de "Estatística II Para Leigos".</p>
+    </footer>
+
+    <script>
+        function wrapLabel(str, maxWidth) {
+            if (str === null || str === undefined) {
+                return '';
+            }
+            str = String(str);
+            if (str.length <= maxWidth) {
+                return str;
+            }
+            const words = str.split(' ');
+            let lines = [];
+            let currentLine = '';
+            words.forEach(word => {
+                if ((currentLine + word).length <= maxWidth) {
+                    currentLine += (currentLine === '' ? '' : ' ') + word;
+                } else {
+                    lines.push(currentLine);
+                    currentLine = word;
+                }
+            });
+            lines.push(currentLine);
+            return lines;
+        }
+
+        const ctxMean = document.getElementById('meanChart').getContext('2d');
+
+        const meanData = { lower: 45, estimate: 50, upper: 55 };
+        const meanChartLabelRaw = 'Média Estimada (ex: R$ 50k)';
+        const meanChartLabelWrapped = wrapLabel(meanChartLabelRaw, 16);
+
+        new Chart(ctxMean, {
+            type: 'bar',
+            data: {
+                labels: [meanChartLabelWrapped],
+                datasets: [{
+                    label: 'Intervalo de Confiança',
+                    data: [[meanData.lower, meanData.upper]],
+                    backgroundColor: 'rgba(255, 209, 102, 0.6)', // Palette Yellow Transparent #FFD166
+                    borderColor: 'rgba(255, 209, 102, 1)', // Palette Yellow
+                    borderWidth: 1,
+                    borderSkipped: false, // Make it a full bar
+                }, {
+                    label: 'Estimativa Pontual',
+                     data: [[meanData.estimate - 0.5, meanData.estimate + 0.5]], // Create a thin bar for the point estimate
+                     backgroundColor: '#118AB2', // Palette Blue
+                     borderColor: '#073B4C', // Palette Dark Blue
+                     borderWidth: 1,
+                     borderSkipped: false,
+                }]
+            },
+            options: {
+                indexAxis: 'y',
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    x: {
+                        beginAtZero: false, // Might not start at 0 depending on data
+                        title: {
+                            display: true,
+                            text: 'Valor Estimado'
+                        }
+                    },
+                    y: {
+                       ticks: {
+                           autoSkip: false // Ensure wrapped labels are shown
+                       }
+                    }
+                },
+                plugins: {
+                    legend: {
+                        display: true,
+                        position: 'bottom',
+                    },
+                    tooltip: {
+                         callbacks: {
+                            title: function(tooltipItems) {
+                                const item = tooltipItems[0];
+                                let label = item.chart.data.labels[item.dataIndex];
+                                if (Array.isArray(label)) {
+                                  return label.join(' ');
+                                } else {
+                                  return label;
+                                }
+                            },
+                            label: function(context) {
+                                if (context.datasetIndex === 0) {
+                                     return ` Intervalo: [${context.raw[0]}, ${context.raw[1]}]`;
+                                } else if (context.datasetIndex === 1) {
+                                     // Estimate is roughly the middle of the thin bar
+                                     const estimateValue = (context.raw[0] + context.raw[1]) / 2;
+                                     return ` Estimativa: ${estimateValue.toFixed(1)}`;
+                                }
+                                return '';
+                            }
+                        }
+                    }
+                }
+            }
+        });
+    </script>
+
+</body>
+</html>

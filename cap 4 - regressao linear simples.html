@@ -1,0 +1,383 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Infográfico: Desvendando a Regressão Linear Simples</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            scroll-behavior: smooth;
+        }
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+            height: 300px;
+            max-height: 400px;
+        }
+        @media (min-width: 768px) {
+            .chart-container {
+                height: 350px;
+                max-height: 450px;
+            }
+        }
+        .stat-card {
+             background-color: #f8fafc;
+             border-left: 5px solid #FFD166; /* Palette Yellow */
+             padding: 1rem;
+             border-radius: 0.5rem;
+             margin-bottom: 1rem;
+             box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+             transition: transform 0.3s ease;
+        }
+        .stat-card:hover {
+            transform: translateY(-5px);
+        }
+         .section-title {
+            font-size: 1.875rem; /* text-3xl */
+            font-weight: 700; /* font-bold */
+            color: #118AB2; /* Palette Blue */
+            margin-bottom: 1.5rem; /* mb-6 */
+            text-align: center;
+        }
+        .highlight {
+            color: #06D6A0; /* Palette Green */
+            font-weight: 600;
+        }
+        .equation {
+            font-family: monospace;
+            background-color: #E9ECEF; /* Light gray */
+            padding: 0.75rem 1rem;
+            border-radius: 0.375rem;
+            display: inline-block;
+            color: #073B4C; /* Palette Dark Blue */
+            font-size: 1.1rem;
+            margin-top: 0.5rem;
+            margin-bottom: 0.5rem;
+        }
+        /* Palette: Energetic & Playful (#FF6B6B, #FFD166, #06D6A0, #118AB2, #073B4C) */
+        /* Narrative Plan: 1. What Is It?, 2. Investigating, 3. Building, 4. Using (Predicting), 5. Evaluating Fit, 6. Limitations, 7. Conclusion */
+        /* Visualization Choices:
+            - Section 1: Icon (Unicode 📈). Goal: Inform. Method: Unicode. NO SVG.
+            - Section 2: Scatter examples (HTML/CSS dots), Correlation icons (+/-/0). Goal: Inform/Relationships. Method: HTML/CSS/Unicode. NO SVG.
+            - Section 3: Equation display, Line fitting visual (HTML/CSS dots+line). Goal: Inform/Organize. Method: HTML/CSS. NO SVG.
+            - Section 4: Chart.js Scatter with line + CI/PI bands. Goal: Relationships/Inform. Method: Chart.js Canvas. NO SVG.
+            - Section 5: R² display (HTML), Residual icons (Unicode ✔️/⚠️). Goal: Inform/Organize. Method: HTML/CSS/Unicode. NO SVG.
+            - Section 6: Warning icons (Unicode ⚠️). Goal: Inform. Method: HTML/Unicode. NO SVG.
+            - Overall: Strictly adhering to NO SVG, NO Mermaid JS. Chart.js used via Canvas. Diagrams use HTML/CSS/Unicode. */
+        /* Mermaid JS Not Used */
+        /* SVG Not Used */
+    </style>
+</head>
+<body class="bg-gradient-to-br from-[#f8f9fa] to-[#e9ecef] text-[#073B4C]">
+
+    <header class="bg-[#118AB2] text-white py-6 shadow-lg sticky top-0 z-10">
+        <div class="container mx-auto px-6 text-center">
+            <h1 class="text-3xl md:text-4xl font-bold">Desvendando a Regressão Linear Simples</h1>
+            <p class="mt-2 text-lg text-gray-200">Modelando relações lineares para fazer previsões.</p>
+        </div>
+    </header>
+
+    <main class="container mx-auto px-6 py-12">
+
+        <section id="o-que-e" class="mb-16">
+            <h2 class="section-title">📈 O Que É Regressão Linear Simples?</h2>
+            <div class="bg-white rounded-lg shadow-xl p-8 md:p-10 text-center flex flex-col md:flex-row items-center gap-8">
+                 <div class="md:w-2/3 text-left">
+                    <p class="text-lg mb-4">É uma ferramenta estatística poderosa para entender e quantificar a <span class="highlight">relação linear</span> entre <span class="highlight">duas</span> variáveis numéricas:</p>
+                    <ul class="list-disc list-inside mb-4 ml-4">
+                        <li><strong>Variável Explicativa (x):</strong> A variável que usamos para prever.</li>
+                        <li><strong>Variável de Resposta (y):</strong> A variável que queremos prever.</li>
+                    </ul>
+                    <p class="text-lg mb-4">O objetivo é encontrar a <span class="highlight">reta</span> que melhor descreve como `y` muda à medida que `x` muda, permitindo-nos fazer <span class="highlight">previsões</span>.</p>
+                    <p class="text-lg">Pense em prever o peso de uma pessoa (y) com base na sua altura (x), ou a nota num teste (y) com base nas horas de estudo (x).</p>
+                 </div>
+                 <div class="md:w-1/3 flex flex-col items-center">
+                    <div class="text-6xl text-[#118AB2] mb-4">🔗</div>
+                    <div class="text-xl font-semibold text-[#118AB2] mb-4">Modelar Relações</div>
+                    <p class="text-sm text-gray-600">Encontrar a reta que melhor descreve a tendência nos dados.</p>
+                </div>
+            </div>
+        </section>
+
+        <section id="investigando" class="mb-16">
+            <h2 class="section-title">🔍 Investigando a Relação</h2>
+            <p class="text-center text-lg mb-8 max-w-3xl mx-auto">Antes de construir o modelo, precisamos verificar se uma relação linear realmente existe e qual a sua força.</p>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <div class="bg-white rounded-lg shadow-lg p-6 border-t-4 border-[#FFD166]">
+                    <h3 class="font-semibold text-xl mb-3 text-[#118AB2]">1. Diagrama de Dispersão</h3>
+                     <p class="mb-4">Visualiza os dados como pontos num gráfico (x, y). Procuramos por:</p>
+                     <ul class="list-disc list-inside ml-4 space-y-1">
+                        <li><span class="font-semibold text-[#06D6A0]">Padrão Linear:</span> Os pontos parecem seguir uma reta?</li>
+                        <li><span class="font-semibold text-[#FF6B6B]">Direção:</span> Ascendente (positiva) ou descendente (negativa)?</li>
+                        <li><span class="font-semibold text-[#118AB2]">Força:</span> Os pontos estão próximos da linha imaginária?</li>
+                     </ul>
+                     <div class="mt-4 h-24 border border-gray-300 rounded relative flex items-center justify-center bg-gray-50">
+                        <span class="absolute top-1 left-2 text-xs text-gray-500">Exemplo Positivo</span>
+                         <span class="text-xl text-[#06D6A0]">. .<span class="text-2xl"> . </span>. .</span>
+                     </div>
+                 </div>
+                 <div class="bg-white rounded-lg shadow-lg p-6 border-t-4 border-[#06D6A0]">
+                     <h3 class="font-semibold text-xl mb-3 text-[#118AB2]">2. Coeficiente de Correlação (r)</h3>
+                     <p class="mb-4">Um número entre -1 e +1 que mede a <span class="highlight">força</span> e a <span class="highlight">direção</span> da relação *linear*.</p>
+                     <ul class="list-none space-y-2">
+                         <li><span class="font-bold text-lg text-[#06D6A0] mr-2">+1:</span> Correlação linear positiva perfeita</li>
+                         <li><span class="font-bold text-lg text-gray-500 mr-2"> 0:</span> Sem correlação linear</li>
+                         <li><span class="font-bold text-lg text-[#FF6B6B] mr-2">-1:</span> Correlação linear negativa perfeita</li>
+                     </ul>
+                    <p class="mt-4 text-sm text-gray-600"><strong>Importante:</strong> Analisar sempre <span class="font-semibold">juntamente</span> com o diagrama de dispersão!</p>
+                 </div>
+            </div>
+        </section>
+
+        <section id="construindo" class="mb-16">
+            <h2 class="section-title">🛠️ Construindo o Modelo: A Reta de Regressão</h2>
+             <p class="text-center text-lg mb-8 max-w-3xl mx-auto">Se a relação linear for confirmada, encontramos a equação da reta que melhor se ajusta aos dados, usando o método dos mínimos quadrados.</p>
+            <div class="bg-white rounded-lg shadow-xl p-8 text-center">
+                 <h3 class="font-semibold text-2xl mb-4 text-[#118AB2]">Equação da Reta:</h3>
+                 <div class="equation">ŷ = a + bx</div>
+                 <div class="mt-6 grid grid-cols-1 md:grid-cols-3 gap-6 text-left">
+                     <div class="stat-card border-l-[#073B4C]">
+                        <h4 class="font-semibold text-lg mb-1">ŷ (y-chapéu)</h4>
+                        <p class="text-sm">O valor <span class="highlight">previsto</span> ou <span class="highlight">estimado</span> de y para um dado x.</p>
+                    </div>
+                     <div class="stat-card border-l-[#118AB2]">
+                        <h4 class="font-semibold text-lg mb-1">a (Interceto y)</h4>
+                        <p class="text-sm">O valor estimado de y quando <span class="highlight">x = 0</span>. (Interpretar com cautela).</p>
+                    </div>
+                     <div class="stat-card border-l-[#06D6A0]">
+                        <h4 class="font-semibold text-lg mb-1">b (Declive)</h4>
+                        <p class="text-sm">Quanto <span class="highlight">ŷ muda (em média)</span> quando <span class="highlight">x aumenta 1 unidade</span>.</p>
+                    </div>
+                </div>
+             </div>
+        </section>
+
+        <section id="usando" class="mb-16">
+            <h2 class="section-title">📊 Usando o Modelo para Previsões</h2>
+             <p class="text-center text-lg mb-8 max-w-3xl mx-auto">Com a equação da reta, podemos fazer estimativas, mas lembre-se que previsões baseadas em amostras têm incerteza.</p>
+             <div class="bg-white rounded-lg shadow-xl p-8 grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
+                <div>
+                    <h3 class="font-semibold text-xl mb-4 text-[#118AB2]">Tipos de Estimativas:</h3>
+                    <div class="stat-card border-l-[#FFD166]">
+                        <h4 class="font-semibold text-lg mb-1">Estimativa Pontual</h4>
+                        <p>Substituir um valor de `x` na equação para obter um único valor estimado `ŷ`.</p>
+                    </div>
+                    <div class="stat-card border-l-[#06D6A0]">
+                        <h4 class="font-semibold text-lg mb-1">Intervalo de Confiança (IC)</h4>
+                        <p>Uma faixa de valores para a <span class="highlight">média</span> de `y` para um dado `x`. Mais estreito.</p>
+                    </div>
+                     <div class="stat-card border-l-[#FF6B6B]">
+                        <h4 class="font-semibold text-lg mb-1">Intervalo de Previsão (IP)</h4>
+                        <p>Uma faixa de valores para um <span class="highlight">único valor individual</span> de `y` para um dado `x`. Sempre mais largo que o IC.</p>
+                    </div>
+                 </div>
+                 <div class="chart-container">
+                    <canvas id="predictionChart"></canvas>
+                    <p class="text-center text-xs text-gray-500 mt-2">Gráfico ilustrativo mostrando a reta de regressão, Intervalo de Confiança (IC) e Intervalo de Previsão (IP).</p>
+                 </div>
+            </div>
+        </section>
+
+        <section id="avaliando" class="mb-16">
+            <h2 class="section-title">✅ Avaliando a Adequação do Modelo</h2>
+            <p class="text-center text-lg mb-8 max-w-3xl mx-auto">Um modelo só é útil se se ajustar bem aos dados e se as suas condições forem satisfeitas.</p>
+             <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                 <div class="bg-white rounded-lg shadow-lg p-6 border-t-4 border-[#118AB2]">
+                     <h3 class="font-semibold text-xl mb-3 text-[#118AB2]">Coeficiente de Determinação (R²)</h3>
+                    <p class="mb-3">Mede a percentagem da variação em `y` que é explicada pela relação linear com `x`.</p>
+                    <p class="text-3xl font-bold text-[#06D6A0] text-center mb-2">0% <span class="text-gray-400">➡️</span> 100%</p>
+                    <p class="text-center text-sm text-gray-600">(Quanto maior, melhor o ajuste da reta à variabilidade dos dados)</p>
+                     <p class="mt-3 text-sm">Ex: R² = 85.8% significa que 85.8% da variação no peso dos livros é explicada pelo peso do aluno.</p>
+                 </div>
+                 <div class="bg-white rounded-lg shadow-lg p-6 border-t-4 border-[#FFD166]">
+                     <h3 class="font-semibold text-xl mb-3 text-[#118AB2]">Análise de Resíduos</h3>
+                    <p class="mb-3">Resíduos são as diferenças entre os valores reais `y` e os valores previstos `ŷ` (`y - ŷ`). A análise dos seus gráficos ajuda a verificar as condições do modelo:</p>
+                    <ul class="list-none space-y-2">
+                        <li><span class="text-green-500 mr-2">✔️</span><strong>Normalidade:</strong> Resíduos devem seguir aprox. uma distribuição normal.</li>
+                        <li><span class="text-green-500 mr-2">✔️</span><strong>Variância Constante:</strong> A dispersão dos resíduos deve ser uniforme ao longo dos valores previstos (sem forma de funil).</li>
+                         <li><span class="text-green-500 mr-2">✔️</span><strong>Independência:</strong> Resíduos não devem mostrar padrões relacionados à ordem de coleta.</li>
+                    </ul>
+                     <p class="mt-3 text-sm text-gray-600">Padrões nos resíduos indicam problemas com o modelo linear!</p>
+                 </div>
+            </div>
+        </section>
+
+         <section id="limitacoes" class="mb-16">
+            <h2 class="section-title">⚠️ Limitações Importantes</h2>
+             <p class="text-center text-lg mb-8 max-w-3xl mx-auto">Mesmo com um bom ajuste, tenha cuidado:</p>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <div class="bg-red-50 rounded-lg shadow-lg p-6 text-center border-t-4 border-red-400">
+                    <div class="text-4xl mb-3">🚫</div>
+                    <h3 class="font-semibold text-xl mb-2 text-red-700">Correlação ≠ Causalidade</h3>
+                    <p>Uma relação forte não prova que `x` <span class="highlight">causa</span> `y`. Pode haver outras variáveis influenciando ambos.</p>
+                 </div>
+                 <div class="bg-yellow-50 rounded-lg shadow-lg p-6 text-center border-t-4 border-yellow-400">
+                    <div class="text-4xl mb-3">🚧</div>
+                    <h3 class="font-semibold text-xl mb-2 text-yellow-700">Extrapolação</h3>
+                    <p>Evite fazer previsões para valores de `x` <span class="highlight">muito fora</span> do intervalo original dos seus dados. A relação linear pode não se manter.</p>
+                 </div>
+                 <div class="bg-blue-50 rounded-lg shadow-lg p-6 text-center border-t-4 border-blue-400 md:col-span-2">
+                     <div class="text-4xl mb-3">🧩</div>
+                    <h3 class="font-semibold text-xl mb-2 text-blue-700">Apenas Uma Variável `x`</h3>
+                    <p>A regressão linear <span class="highlight">simples</span> usa só uma variável explicativa. Muitas vezes, incluir <span class="highlight">mais variáveis</span> (regressão múltipla) melhora significativamente as previsões.</p>
+                 </div>
+            </div>
+        </section>
+
+        <section id="conclusao-final" class="text-center border-t pt-10">
+            <h2 class="section-title">💡 Conclusão</h2>
+            <p class="text-xl max-w-3xl mx-auto text-gray-700">A Regressão Linear Simples é uma ferramenta valiosa para modelar e prever relações lineares entre duas variáveis. No entanto, é essencial <span class="highlight">verificar as condições</span>, <span class="highlight">avaliar o ajuste</span> do modelo e estar ciente das suas <span class="highlight">limitações</span> para usar os resultados de forma responsável e eficaz.</p>
+        </section>
+
+    </main>
+
+    <footer class="bg-[#118AB2] text-white text-center py-4 mt-12">
+        <p class="text-sm">&copy; 2025 Infográfico Estatístico. Baseado no Capítulo 4 de "Estatística II Para Leigos".</p>
+    </footer>
+
+    <script>
+        function wrapLabel(str, maxWidth) {
+             if (str === null || str === undefined) return '';
+             str = String(str);
+             if (str.length <= maxWidth) return str;
+             const words = str.split(' ');
+             let lines = [];
+             let currentLine = '';
+             words.forEach(word => {
+                 if ((currentLine + word).length <= maxWidth) {
+                     currentLine += (currentLine === '' ? '' : ' ') + word;
+                 } else {
+                     lines.push(currentLine);
+                     currentLine = word;
+                 }
+             });
+             lines.push(currentLine);
+             return lines;
+        }
+
+        const ctxPrediction = document.getElementById('predictionChart').getContext('2d');
+
+        // Sample data points for visualization
+        const sampleData = [
+            { x: 1, y: 3 }, { x: 2, y: 4.5 }, { x: 3, y: 5 }, { x: 4, y: 7 },
+            { x: 5, y: 6.5 }, { x: 6, y: 8 }, { x: 7, y: 9.5 }, { x: 8, y: 9 },
+            { x: 9, y: 11 }, { x: 10, y: 12 }
+        ];
+
+        // Simple linear regression calculation (example)
+        // y = 2 + 1*x (approx for visualization)
+        const regressionLine = sampleData.map(p => ({ x: p.x, y: 2 + 1 * p.x }));
+
+        // Approximate Confidence Interval (wider for smaller n)
+        const confidenceIntervalUpper = sampleData.map(p => ({ x: p.x, y: (2 + 1 * p.x) + 1.5 })); // Example offset
+        const confidenceIntervalLower = sampleData.map(p => ({ x: p.x, y: (2 + 1 * p.x) - 1.5 }));
+
+        // Approximate Prediction Interval (wider than CI)
+        const predictionIntervalUpper = sampleData.map(p => ({ x: p.x, y: (2 + 1 * p.x) + 3 })); // Example offset, wider
+        const predictionIntervalLower = sampleData.map(p => ({ x: p.x, y: (2 + 1 * p.x) - 3 }));
+
+        new Chart(ctxPrediction, {
+            type: 'scatter',
+            data: {
+                datasets: [
+                {
+                    label: 'Dados Observados',
+                    data: sampleData,
+                    backgroundColor: '#FF6B6B', // Palette Red
+                    pointRadius: 5,
+                    pointHoverRadius: 7,
+                    type: 'scatter',
+                    order: 4 // Draw points last
+                },
+                {
+                    label: 'Reta de Regressão (ŷ = a + bx)',
+                    data: regressionLine,
+                    borderColor: '#118AB2', // Palette Blue
+                    borderWidth: 2,
+                    pointRadius: 0,
+                    type: 'line',
+                    fill: false,
+                    order: 3
+                },
+                 {
+                    label: 'Intervalo de Confiança (Média y)',
+                    data: confidenceIntervalUpper.concat(confidenceIntervalLower.slice().reverse()), // Combine upper and lower for fill
+                    backgroundColor: 'rgba(6, 214, 160, 0.2)', // Palette Green with transparency
+                    borderColor: 'transparent', // No border for the fill area itself
+                    pointRadius: 0,
+                    type: 'line',
+                    fill: true,
+                    order: 2 // Draw CI before regression line
+                 },
+                 {
+                    label: 'Intervalo de Previsão (Individual y)',
+                    data: predictionIntervalUpper.concat(predictionIntervalLower.slice().reverse()), // Combine upper and lower for fill
+                    backgroundColor: 'rgba(255, 209, 102, 0.2)', // Palette Yellow with transparency
+                    borderColor: 'transparent',
+                    pointRadius: 0,
+                    type: 'line',
+                    fill: true,
+                    order: 1 // Draw PI first
+                 }
+
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    x: {
+                        type: 'linear',
+                        position: 'bottom',
+                        title: {
+                            display: true,
+                            text: 'Variável Explicativa (x)'
+                        }
+                    },
+                    y: {
+                        beginAtZero: true,
+                        title: {
+                            display: true,
+                            text: 'Variável de Resposta (y)'
+                        }
+                    }
+                },
+                plugins: {
+                    tooltip: {
+                         callbacks: {
+                            title: function(tooltipItems) { return 'Ponto de Dados'; }, // Keep tooltip simple
+                            label: function(context) {
+                                if (context.dataset.label === 'Dados Observados') {
+                                    return `(x: ${context.parsed.x}, y: ${context.parsed.y})`;
+                                }
+                                return null; // Hide tooltips for lines/bands
+                             }
+                        }
+                    },
+                    legend: {
+                        position: 'bottom',
+                        labels: {
+                             // Filter out fill labels if needed, or customize
+                             filter: function(legendItem, chartData) {
+                                 // Optionally hide fill area labels if they are confusing
+                                 // return legendItem.datasetIndex !== 2 && legendItem.datasetIndex !== 3;
+                                 return true;
+                             }
+                        }
+                    }
+                }
+            }
+        });
+    </script>
+
+</body>
+</html>

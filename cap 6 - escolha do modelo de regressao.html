@@ -1,0 +1,452 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Infográfico: Escolha do Modelo de Regressão</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            scroll-behavior: smooth;
+            background-color: #f0f9ff; /* Light background */
+        }
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 600px; /* Max width */
+            margin-left: auto;
+            margin-right: auto;
+            height: 350px; /* Responsive height */
+            max-height: 450px; /* Max height */
+        }
+         @media (max-width: 768px) {
+            .chart-container {
+                 height: 300px;
+                 max-height: 400px;
+            }
+        }
+        .stat-card {
+             background-color: white;
+             border-left: 5px solid #FF6B6B; /* Palette Red Accent */
+             padding: 1.5rem;
+             border-radius: 0.75rem; /* Slightly larger radius */
+             margin-bottom: 1.5rem;
+             box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); /* Soft shadow */
+             transition: transform 0.3s ease, box-shadow 0.3s ease;
+             display: flex;
+             flex-direction: column;
+             align-items: center; /* Center content */
+             text-align: center;
+        }
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
+        }
+         .section-title {
+            font-size: 2rem; /* text-3xl approx */
+            font-weight: 700; /* font-bold */
+            color: #118AB2; /* Palette Blue */
+            margin-bottom: 2rem; /* mb-8 */
+            text-align: center;
+            padding-bottom: 0.75rem;
+            border-bottom: 3px solid #FFD166; /* Palette Yellow */
+            display: inline-block;
+        }
+         .section-container {
+            text-align: center; /* Center the title block */
+             margin-bottom: 4rem; /* mb-16 */
+        }
+        .highlight {
+            color: #06D6A0; /* Palette Green */
+            font-weight: 600;
+        }
+         .step-indicator {
+             background-color: #118AB2; /* Palette Blue */
+             color: white;
+             border-radius: 50%;
+             width: 3rem;
+             height: 3rem;
+             display: inline-flex;
+             align-items: center;
+             justify-content: center;
+             font-weight: bold;
+             font-size: 1.25rem;
+             margin-right: 1rem;
+             flex-shrink: 0;
+             box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        }
+        .process-step {
+            display: flex;
+            align-items: center; /* Vertically center icon with text */
+            background-color: #ffffff;
+            padding: 1.5rem;
+            border-radius: 0.5rem;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            margin-bottom: 1.5rem;
+            text-align: left;
+        }
+         .process-text h3 {
+             color: #118AB2; /* Palette Blue */
+        }
+         .criteria-icon {
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+        }
+         .method-card {
+             background-color: white;
+             padding: 1.5rem;
+             border-radius: 0.5rem;
+             box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+             margin-bottom: 1rem;
+             border-top: 4px solid #06D6A0; /* Palette Green */
+        }
+        .method-card h4 {
+            color: #118AB2; /* Palette Blue */
+            margin-bottom: 0.5rem;
+        }
+        .preferred-method {
+            border-top-color: #FFD166; /* Palette Yellow for preferred */
+            position: relative;
+        }
+        .preferred-badge {
+            position: absolute;
+            top: -10px;
+            right: 10px;
+            background-color: #FFD166; /* Palette Yellow */
+            color: #073B4C; /* Palette Dark Navy */
+            padding: 0.25rem 0.75rem;
+            border-radius: 1rem;
+            font-size: 0.75rem;
+            font-weight: bold;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+        }
+         /* Palette: Energetic & Playful (#FF6B6B, #FFD166, #06D6A0, #118AB2, #073B4C) */
+        /* Narrative Plan: 1. Intro (Goal: Accuracy+Parsimony), 2. Prep Steps, 3. Criteria (R2Adj, Cp, s), 4. Methods (Fwd, Bwd, Best Subsets), 5. Using Best Subsets (Output, Compare, Select), 6. Validate, 7. Conclusion */
+        /* Visualization Choices:
+             - Section 1: Balancing scale icon (Unicode ⚖️). Goal: Inform. Method: Unicode/HTML. NO SVG.
+             - Section 2: Numbered list with icons (📝, 📊, 🔗⚠️). Goal: Organize. Method: HTML/CSS/Unicode. NO SVG.
+             - Section 3: Stat cards with icons (📈, 🎯, 📉). Goal: Inform. Method: HTML/CSS/Unicode. NO SVG.
+             - Section 4: Cards describing methods, Best Subsets highlighted. Simple flow icons (➕➡️, ➖➡️, ✨). Goal: Organize/Inform. Method: HTML/CSS/Unicode. NO SVG.
+             - Section 5: Mock table (`<table>`), Comparison chart (Chart.js Bar). Goal: Organize/Compare. Method: HTML `<table>`, Chart.js Canvas. NO SVG.
+             - Section 6: Checkmark icon (✔️). Goal: Inform. Method: Unicode/HTML. NO SVG.
+             - Section 7: Lightbulb icon (💡). Goal: Inform. Method: Unicode/HTML. NO SVG.
+             - Overall: Strictly adhering to NO SVG, NO Mermaid JS. Chart.js used via Canvas. Diagrams use HTML/CSS/Unicode. */
+        /* Mermaid JS Not Used */
+        /* SVG Not Used */
+    </style>
+</head>
+<body class="bg-[#f0f9ff] text-[#073B4C]">
+
+    <header class="bg-[#118AB2] text-white py-6 shadow-lg sticky top-0 z-10">
+        <div class="container mx-auto px-6 text-center">
+            <h1 class="text-3xl md:text-4xl font-bold">Escolha do Modelo de Regressão</h1>
+            <p class="mt-2 text-lg text-gray-200">Encontrando o Equilíbrio entre Precisão e Simplicidade.</p>
+        </div>
+    </header>
+
+    <main class="container mx-auto px-6 py-12">
+
+        <section id="objetivo" class="section-container">
+            <h2 class="section-title">⚖️ O Objetivo: Equilíbrio Perfeito</h2>
+            <div class="bg-white rounded-lg shadow-xl p-8 md:p-10 text-lg max-w-4xl mx-auto text-left space-y-4 text-[#073B4C]">
+                <p>Ao construir um modelo de regressão múltipla com muitas variáveis X potenciais, o desafio é selecionar o <span class="highlight font-semibold">melhor subconjunto</span>.</p>
+                <p>O "melhor" modelo idealmente é:</p>
+                <ul class="list-disc list-inside ml-4 space-y-2">
+                    <li><span class="font-bold text-[#FF6B6B]">Preciso:</span> Explica bem a variação em Y e faz boas previsões.</li>
+                    <li><span class="font-bold text-[#06D6A0]">Parcimonioso:</span> Usa o mínimo de variáveis X necessárias, evitando complexidade.</li>
+                </ul>
+                <p class="mt-4">Incluir variáveis irrelevantes atrapalha. Excluir variáveis importantes enviesa o resultado. Precisamos de um método!</p>
+            </div>
+        </section>
+
+        <section id="preparacao" class="section-container">
+            <h2 class="section-title">🛠️ Preparação Essencial</h2>
+            <div class="bg-white rounded-lg shadow-xl p-8 md:p-10 max-w-4xl mx-auto text-left text-[#073B4C] space-y-6">
+                 <div class="process-step">
+                    <span class="step-indicator">📝</span>
+                    <div class="process-text">
+                        <h3 class="font-semibold text-xl mb-1">Identificar & Coletar</h3>
+                        <p>Listar todas as X's candidatas relevantes e coletar dados completos para Y e todas as X's.</p>
+                    </div>
+                 </div>
+                 <div class="process-step">
+                    <span class="step-indicator">📊</span>
+                    <div class="process-text">
+                        <h3 class="font-semibold text-xl mb-1">Análise Inicial (X vs Y)</h3>
+                        <p>Verificar relação de cada X com Y (correlação, diagramas de dispersão). Descartar X's claramente irrelevantes.</p>
+                    </div>
+                </div>
+                 <div class="process-step">
+                    <span class="step-indicator">🔗<span class="text-red-500 font-bold">⚠️</span></span>
+                    <div class="process-text">
+                        <h3 class="font-semibold text-xl mb-1">Verificar Multicolinearidade (X vs X)</h3>
+                        <p>Analisar correlação <span class="font-bold">entre</span> as X's. Se duas X's forem muito correlacionadas, geralmente incluímos apenas <span class="underline">uma</span> delas no modelo final.</p>
+                     </div>
+                 </div>
+            </div>
+        </section>
+
+        <section id="criterios" class="section-container">
+            <h2 class="section-title">🎯 Critérios de Julgamento</h2>
+            <p class="text-center text-lg mb-8 max-w-3xl mx-auto text-[#073B4C]">Como comparamos diferentes modelos?</p>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-6xl mx-auto">
+                <div class="stat-card">
+                    <span class="criteria-icon">📈</span>
+                    <h3 class="font-semibold text-xl mb-2 text-[#118AB2]">R² Ajustado</h3>
+                    <p class="text-sm">Percentagem da variação de Y explicada, <span class="font-bold">penalizando</span> modelos complexos. Preferível ao R² simples.</p>
+                    <p class="mt-2 font-bold text-lg text-[#06D6A0]">Quanto mais alto, melhor!</p>
+                </div>
+                <div class="stat-card border-l-[#FFD166]">
+                     <span class="criteria-icon">🎯</span>
+                    <h3 class="font-semibold text-xl mb-2 text-[#118AB2]">Cp de Mallow</h3>
+                    <p class="text-sm">Equilibra ajuste e número de variáveis (p = nº de X's + 1).</p>
+                    <p class="mt-2 font-bold text-lg text-[#06D6A0]">Ideal: Baixo e próximo de 'p'.</p>
+                </div>
+                 <div class="stat-card border-l-[#06D6A0]">
+                     <span class="criteria-icon">📉</span>
+                    <h3 class="font-semibold text-xl mb-2 text-[#118AB2]">Erro Padrão (s)</h3>
+                    <p class="text-sm">Erro típico de previsão do modelo.</p>
+                    <p class="mt-2 font-bold text-lg text-[#06D6A0]">Quanto mais baixo, melhor!</p>
+                </div>
+            </div>
+        </section>
+
+         <section id="metodos" class="section-container">
+            <h2 class="section-title">🔍 Métodos de Seleção</h2>
+            <p class="text-center text-lg mb-8 max-w-3xl mx-auto text-[#073B4C]">Algoritmos para encontrar bons subconjuntos de X's.</p>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-6xl mx-auto text-left">
+                <div class="method-card">
+                    <h4><span class="font-bold text-xl mr-2">➕➡️</span>Seleção Forward</h4>
+                    <p class="text-sm">Começa vazio. Adiciona a variável mais significativa a cada passo. Uma vez dentro, não sai.</p>
+                </div>
+                <div class="method-card">
+                     <h4><span class="font-bold text-xl mr-2">➖➡️</span>Eliminação Backward</h4>
+                    <p class="text-sm">Começa com todas as X's. Remove a menos significativa a cada passo. Uma vez fora, não volta.</p>
+                </div>
+                <div class="method-card preferred-method">
+                    <span class="preferred-badge">Preferido ⭐</span>
+                     <h4><span class="font-bold text-xl mr-2">✨</span>Melhores Subconjuntos (Best Subsets)</h4>
+                    <p class="text-sm">Examina <span class="font-bold">todos</span> os modelos possíveis (1-X, 2-X, etc.). Identifica os melhores para cada tamanho usando os critérios (R² Adj, Cp, s).</p>
+                </div>
+            </div>
+        </section>
+
+        <section id="best-subsets" class="section-container">
+             <h2 class="section-title">🏆 Usando "Melhores Subconjuntos"</h2>
+             <p class="text-center text-lg mb-8 max-w-3xl mx-auto text-[#073B4C]">O método preferido para encontrar o equilíbrio ideal.</p>
+            <div class="bg-white rounded-lg shadow-xl p-8 md:p-10 max-w-6xl mx-auto text-left text-[#073B4C] md:grid md:grid-cols-2 md:gap-8 items-start">
+                <div>
+                     <h3 class="font-semibold text-xl mb-4 text-[#118AB2]">1. Analisar a Saída do Software</h3>
+                    <p class="mb-4">O software (ex: Minitab) gera uma tabela mostrando os melhores modelos para cada nº de variáveis (k) e suas estatísticas:</p>
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-sm border border-collapse border-[#FFD166]">
+                            <thead>
+                                <tr class="bg-[#FFF8E1] text-[#073B4C]">
+                                    <th class="border p-2">Nº Vars (k)</th>
+                                    <th class="border p-2">R² Adj (%)</th>
+                                    <th class="border p-2">Cp</th>
+                                    <th class="border p-2">s</th>
+                                    <th class="border p-2">Variáveis no Modelo</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr class="bg-white">
+                                    <td class="border p-2 text-center">1</td> <td class="border p-2 text-center">75.2</td> <td class="border p-2 text-center">15.1</td> <td class="border p-2 text-center">2.8</td> <td class="border p-2">X₃</td>
+                                </tr>
+                                <tr class="bg-gray-50">
+                                    <td class="border p-2 text-center">1</td> <td class="border p-2 text-center">70.1</td> <td class="border p-2 text-center">20.3</td> <td class="border p-2 text-center">3.1</td> <td class="border p-2">X₁</td>
+                                </tr>
+                                <tr class="bg-white">
+                                    <td class="border p-2 text-center font-bold">2</td> <td class="border p-2 text-center font-bold">88.5</td> <td class="border p-2 text-center font-bold">3.5</td> <td class="border p-2 text-center font-bold">1.8</td> <td class="border p-2">X₁, X₃</td>
+                                </tr>
+                               <tr class="bg-gray-50">
+                                    <td class="border p-2 text-center">2</td> <td class="border p-2 text-center">85.0</td> <td class="border p-2 text-center">7.2</td> <td class="border p-2 text-center">2.1</td> <td class="border p-2">X₂, X₃</td>
+                                </tr>
+                               <tr class="bg-white">
+                                    <td class="border p-2 text-center font-bold text-blue-600">3</td> <td class="border p-2 text-center font-bold text-blue-600">92.1</td> <td class="border p-2 text-center font-bold text-blue-600">3.1</td> <td class="border p-2 text-center font-bold text-blue-600">1.5</td> <td class="border p-2">X₁, X₂, X₃</td>
+                                </tr>
+                               <tr class="bg-gray-50">
+                                    <td class="border p-2 text-center">4</td> <td class="border p-2 text-center">92.0</td> <td class="border p-2 text-center">5.0</td> <td class="border p-2 text-center">1.5</td> <td class="border p-2">X₁, X₂, X₃, X₄</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        <p class="text-xs text-gray-500 mt-1 italic">(Tabela ilustrativa)</p>
+                    </div>
+                     <h3 class="font-semibold text-xl mt-6 mb-4 text-[#118AB2]">2. Comparar & Selecionar</h3>
+                     <ul class="list-disc list-inside space-y-1 text-sm">
+                         <li>Procure R² Adj altos.</li>
+                         <li>Procure Cp baixos e <span class="font-bold">próximos de k+1</span>.</li>
+                         <li>Procure s baixos.</li>
+                         <li><span class="font-bold text-[#FF6B6B]">Equilíbrio:</span> Se um modelo mais simples (menos X's) tem estatísticas quase tão boas quanto um mais complexo, prefira o simples (parcimónia)!</li>
+                         <li>Na tabela acima, o modelo com <span class="highlight font-bold">X₁, X₂, X₃ (k=3)</span> parece ser a melhor escolha: R² Adj alto (92.1), Cp baixo e próximo de p=4 (3.1), 's' baixo (1.5). O modelo com k=4 não melhora significativamente e tem Cp maior.</li>
+                     </ul>
+                 </div>
+                 <div class="flex flex-col items-center">
+                    <div class="chart-container mt-6 md:mt-0">
+                        <canvas id="modelCompareChart"></canvas>
+                    </div>
+                     <p class="text-center text-xs text-gray-500 mt-2">Comparando R² Ajustado (ideal alto) e Cp (ideal baixo, ≈ k+1) entre os melhores modelos de cada tamanho (k).</p>
+                </div>
+            </div>
+             <div class="mt-8 text-left max-w-6xl mx-auto">
+                 <h3 class="font-semibold text-xl mb-4 text-[#118AB2]">3. Validar o Modelo Escolhido <span class="text-green-500">✔️</span></h3>
+                 <p>Após escolher (ex: X₁, X₂, X₃), ajuste <span class="underline">apenas esse modelo</span> e verifique suas condições (análise de resíduos) como faria para qualquer regressão múltipla, para garantir que é confiável.</p>
+            </div>
+        </section>
+
+         <section id="conclusao-final" class="section-container border-t pt-10">
+            <h2 class="section-title">💡 Conclusão</h2>
+            <p class="text-xl max-w-3xl mx-auto text-[#073B4C]">A escolha do modelo de regressão é essencial para criar modelos preditivos úteis e interpretáveis. Usando critérios como <span class="highlight">R² Ajustado</span>, <span class="highlight">Cp de Mallow</span> e <span class="highlight">s</span>, e procedimentos sistemáticos como <span class="highlight">Melhores Subconjuntos</span>, podemos encontrar o equilíbrio ideal entre <span class="font-bold text-[#FF6B6B]">precisão</span> e <span class="font-bold text-[#06D6A0]">parcimónia</span>.</p>
+        </section>
+
+    </main>
+
+    <footer class="bg-[#118AB2] text-white text-center py-4 mt-12">
+        <p class="text-sm">&copy; 2025 Infográfico Estatístico. Baseado no Capítulo 6 de "Estatística II Para Leigos".</p>
+    </footer>
+
+    <script>
+       function wrapLabel(str, maxWidth) {
+           if (str === null || str === undefined) return '';
+           str = String(str);
+           if (str.length <= maxWidth) return str;
+           const words = str.split(' ');
+           let lines = [];
+           let currentLine = '';
+           words.forEach(word => {
+               if ((currentLine + word).length <= maxWidth) {
+                   currentLine += (currentLine === '' ? '' : ' ') + word;
+               } else {
+                   lines.push(currentLine);
+                   currentLine = word;
+               }
+           });
+           lines.push(currentLine);
+           return lines;
+       }
+
+       const ctxCompare = document.getElementById('modelCompareChart').getContext('2d');
+
+       // Data based on the mock table
+       const labels = ['1 Var (X₃)', '2 Vars (X₁,X₃)', '3 Vars (X₁,X₂,X₃)', '4 Vars (X₁,X₂,X₃,X₄)'];
+       const rSquaredAdjData = [75.2, 88.5, 92.1, 92.0];
+       const cpData = [15.1, 3.5, 3.1, 5.0];
+       const idealCp = [2, 3, 4, 5]; // p = k+1
+
+       new Chart(ctxCompare, {
+           type: 'bar',
+           data: {
+               labels: labels.map(label => wrapLabel(label, 10)), // Wrap labels if needed
+               datasets: [
+                   {
+                       label: 'R² Ajustado (%)',
+                       data: rSquaredAdjData,
+                       backgroundColor: '#06D6A0', // Palette Green
+                       yAxisID: 'yR2',
+                       order: 1 // Draw bars first
+                   },
+                   {
+                       label: 'Cp de Mallow',
+                       data: cpData,
+                       backgroundColor: '#FF6B6B', // Palette Red
+                       borderColor: '#FF6B6B',
+                       type: 'line', // Show Cp as a line
+                       fill: false,
+                       yAxisID: 'yCp',
+                       order: 0, // Draw line on top
+                       pointRadius: 5,
+                       pointHoverRadius: 7
+                   },
+                    {
+                       label: 'Cp Ideal (k+1)',
+                       data: idealCp,
+                       borderColor: '#FFD166', // Palette Yellow
+                       borderWidth: 2,
+                       borderDash: [5, 5],
+                       type: 'line',
+                       fill: false,
+                       yAxisID: 'yCp',
+                       order: 0,
+                       pointRadius: 0, // No points for ideal line
+                   }
+               ]
+           },
+           options: {
+               responsive: true,
+               maintainAspectRatio: false,
+               scales: {
+                   yR2: { // Y-axis for R-Squared Adjusted
+                       type: 'linear',
+                       position: 'left',
+                       beginAtZero: false, // Don't necessarily start R2 at 0
+                       min: Math.min(...rSquaredAdjData) - 10 > 0 ? Math.min(...rSquaredAdjData) - 5 : 0,
+                       max: 100, // R2Adj max is 100
+                       title: {
+                           display: true,
+                           text: 'R² Ajustado (%)',
+                           color: '#06D6A0'
+                       },
+                       grid: {
+                           drawOnChartArea: false // Only draw grid for one axis
+                       }
+                   },
+                   yCp: { // Y-axis for Cp
+                       type: 'linear',
+                       position: 'right',
+                       beginAtZero: true,
+                       // Dynamically set max based on Cp data
+                       max: Math.max(...cpData, ...idealCp) * 1.2, // Add some padding
+                       title: {
+                           display: true,
+                           text: 'Cp de Mallow',
+                           color: '#FF6B6B'
+                       }
+                   },
+                   x: {
+                        title: {
+                            display: true,
+                            text: 'Número de Variáveis no Modelo (k)'
+                        }
+                   }
+               },
+               plugins: {
+                   tooltip: {
+                       mode: 'index',
+                       intersect: false,
+                       callbacks: {
+                            title: function(tooltipItems) {
+                                // tooltipItems is an array, take the first item
+                                const item = tooltipItems[0];
+                                // Access the label using the item's datasetIndex and dataIndex
+                                let label = item.chart.data.labels[item.dataIndex];
+                                // Check if the label is an array (multiline)
+                                if (Array.isArray(label)) {
+                                // Join the array elements with a space for display
+                                return label.join(' ');
+                                } else {
+                                // If it's a single line label, return it as is
+                                return String(label); // Ensure it's a string
+                                }
+                            }
+                        }
+                   },
+                   legend: {
+                       position: 'bottom'
+                   }
+               },
+                interaction: {
+                    mode: 'index',
+                    intersect: false,
+                },
+           }
+       });
+
+    </script>
+
+</body>
+</html>

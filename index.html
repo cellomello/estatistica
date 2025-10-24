@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Infográficos de Estatística</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            scroll-behavior: smooth;
+        }
+        .card {
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+        }
+        .gradient-bg {
+            background: linear-gradient(135deg, #073B4C 0%, #118AB2 100%);
+        }
+    </style>
+</head>
+<body class="bg-gray-50">
+    <header class="gradient-bg text-white py-16 px-4">
+        <div class="max-w-6xl mx-auto text-center">
+            <h1 class="text-4xl md:text-5xl font-bold mb-4">Infográficos de Estatística</h1>
+            <p class="text-xl md:text-2xl text-gray-100">Explore conceitos estatísticos de forma visual e interativa</p>
+        </div>
+    </header>
+
+    <main class="max-w-6xl mx-auto px-4 py-12">
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <a href="cap 3 - Intervalo de confianca.html" class="card bg-white rounded-lg shadow-md overflow-hidden block">
+                <div class="bg-gradient-to-r from-blue-500 to-blue-600 h-2"></div>
+                <div class="p-6">
+                    <div class="text-sm font-semibold text-blue-600 mb-2">CAPÍTULO 3</div>
+                    <h2 class="text-xl font-bold text-gray-800 mb-3">Intervalo de Confiança</h2>
+                    <p class="text-gray-600">Desvendando os intervalos de confiança e sua aplicação na estatística inferencial.</p>
+                </div>
+            </a>
+
+            <a href="cap 3 - testes de hipotese.html" class="card bg-white rounded-lg shadow-md overflow-hidden block">
+                <div class="bg-gradient-to-r from-green-500 to-green-600 h-2"></div>
+                <div class="p-6">
+                    <div class="text-sm font-semibold text-green-600 mb-2">CAPÍTULO 3</div>
+                    <h2 class="text-xl font-bold text-gray-800 mb-3">Testes de Hipótese</h2>
+                    <p class="text-gray-600">Compreenda os fundamentos dos testes de hipótese e sua importância na análise estatística.</p>
+                </div>
+            </a>
+
+            <a href="cap 4 - regressao linear simples.html" class="card bg-white rounded-lg shadow-md overflow-hidden block">
+                <div class="bg-gradient-to-r from-purple-500 to-purple-600 h-2"></div>
+                <div class="p-6">
+                    <div class="text-sm font-semibold text-purple-600 mb-2">CAPÍTULO 4</div>
+                    <h2 class="text-xl font-bold text-gray-800 mb-3">Regressão Linear Simples</h2>
+                    <p class="text-gray-600">Explore a relação entre duas variáveis através da regressão linear simples.</p>
+                </div>
+            </a>
+
+            <a href="cap 5 - regressao multipla com duas variaveis x.html" class="card bg-white rounded-lg shadow-md overflow-hidden block">
+                <div class="bg-gradient-to-r from-red-500 to-red-600 h-2"></div>
+                <div class="p-6">
+                    <div class="text-sm font-semibold text-red-600 mb-2">CAPÍTULO 5</div>
+                    <h2 class="text-xl font-bold text-gray-800 mb-3">Regressão Múltipla</h2>
+                    <p class="text-gray-600">Análise de regressão múltipla com duas variáveis independentes.</p>
+                </div>
+            </a>
+
+            <a href="cap 6 - escolha do modelo de regressao.html" class="card bg-white rounded-lg shadow-md overflow-hidden block">
+                <div class="bg-gradient-to-r from-yellow-500 to-yellow-600 h-2"></div>
+                <div class="p-6">
+                    <div class="text-sm font-semibold text-yellow-600 mb-2">CAPÍTULO 6</div>
+                    <h2 class="text-xl font-bold text-gray-800 mb-3">Escolha do Modelo de Regressão</h2>
+                    <p class="text-gray-600">Critérios e métodos para selecionar o melhor modelo de regressão.</p>
+                </div>
+            </a>
+
+            <a href="cap 7 - regressao nao linear.html" class="card bg-white rounded-lg shadow-md overflow-hidden block">
+                <div class="bg-gradient-to-r from-indigo-500 to-indigo-600 h-2"></div>
+                <div class="p-6">
+                    <div class="text-sm font-semibold text-indigo-600 mb-2">CAPÍTULO 7</div>
+                    <h2 class="text-xl font-bold text-gray-800 mb-3">Regressão Não Linear</h2>
+                    <p class="text-gray-600">Modelagem de relações não lineares entre variáveis.</p>
+                </div>
+            </a>
+
+            <a href="cap 8 - regressao logistica.html" class="card bg-white rounded-lg shadow-md overflow-hidden block">
+                <div class="bg-gradient-to-r from-pink-500 to-pink-600 h-2"></div>
+                <div class="p-6">
+                    <div class="text-sm font-semibold text-pink-600 mb-2">CAPÍTULO 8</div>
+                    <h2 class="text-xl font-bold text-gray-800 mb-3">Regressão Logística</h2>
+                    <p class="text-gray-600">Análise de variáveis dependentes categóricas através da regressão logística.</p>
+                </div>
+            </a>
+        </div>
+    </main>
+
+    <footer class="bg-gray-800 text-white py-8 px-4 mt-16">
+        <div class="max-w-6xl mx-auto text-center">
+            <p class="text-gray-300">© 2024 Infográficos de Estatística. Todos os direitos reservados.</p>
+        </div>
+    </footer>
+</body>
+</html>
