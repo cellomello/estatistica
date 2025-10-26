@@ -1,0 +1,404 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Infográfico: Roadmap para Escolha do Modelo de Regressão</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            scroll-behavior: smooth;
+            background-color: #f0f7ff; /* Lightest blue background */
+        }
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 500px;
+            margin-left: auto;
+            margin-right: auto;
+            height: 280px;
+            max-height: 350px;
+        }
+         .mini-chart-container { /* Specific class for smaller charts */
+             position: relative;
+             width: 100%;
+             max-width: 300px;
+             margin-left: auto;
+             margin-right: auto;
+             height: 180px; /* Consistent height for mini charts */
+             max-height: 200px;
+             margin-top: 1rem; /* Add some space above mini charts */
+         }
+
+         @media (max-width: 640px) { /* sm */
+             .chart-container {
+                 height: 250px;
+                 max-height: 300px;
+             }
+             .mini-chart-container {
+                  height: 160px;
+                  max-height: 180px;
+             }
+         }
+        .material-card {
+             background-color: white;
+             border-radius: 0.75rem; /* rounded-xl */
+             box-shadow: 0 4px 10px rgba(44, 94, 145, 0.1); /* Subtle blue shadow */
+             padding: 1.5rem; /* p-6 */
+             margin-bottom: 1.5rem; /* mb-6 */
+             border: 1px solid #B9D7F7; /* Light blue border */
+        }
+         .section-title {
+            font-size: 1.875rem; /* text-3xl */
+            font-weight: 700; /* font-bold */
+            color: #2C5E91; /* Dark Blue */
+            margin-bottom: 2rem; /* mb-8 */
+            text-align: center;
+            padding-bottom: 0.5rem;
+            border-bottom: 3px solid #84B4E3; /* Medium Blue */
+            display: inline-block;
+        }
+         .section-container {
+            text-align: center;
+             margin-bottom: 3rem; /* mb-12 */
+        }
+        .highlight {
+             color: #4F86C6; /* Primary Blue */
+             font-weight: 600;
+        }
+         .step-box {
+            background-color: #ffffff;
+            border: 2px solid #84B4E3; /* Medium Blue */
+            color: #1A3A5A; /* Darkest Blue */
+            padding: 1rem 1.5rem;
+            border-radius: 0.5rem; /* rounded-lg */
+            margin-bottom: 1rem;
+            text-align: left;
+            position: relative;
+            box-shadow: 0 2px 4px rgba(44, 94, 145, 0.05);
+        }
+        .step-number {
+            background-color: #2C5E91; /* Dark Blue */
+            color: white;
+            border-radius: 50%;
+            width: 2rem;
+            height: 2rem;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            position: absolute;
+            top: -1rem;
+            left: -1rem;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+        .flow-arrow {
+            font-size: 2rem;
+            color: #4F86C6; /* Primary Blue */
+            margin: 0.5rem 0;
+            display: block; /* Make arrows vertical */
+        }
+        .decision-box {
+            background-color: #e0f0ff; /* Very light blue */
+            border: 1px dashed #4F86C6;
+            color: #1A3A5A;
+            padding: 0.75rem;
+            border-radius: 0.375rem; /* rounded-md */
+            margin-top: 0.5rem;
+            font-size: 0.875rem; /* text-sm */
+        }
+        .alternative-path {
+             /* background-color set individually below */
+             border: 1px solid; /* border color set individually */
+             color: #1A3A5A; /* default dark text */
+             padding: 1rem;
+             border-radius: 0.5rem;
+             margin-top: 1rem;
+        }
+         /* Palette: Brilliant Blues (#4F86C6, #84B4E3, #2C5E91, #B9D7F7, #1A3A5A) */
+         /* Mermaid JS Not Used */
+         /* SVG Not Used */
+    </style>
+</head>
+<body class="bg-[#f0f7ff] text-[#1A3A5A]">
+
+    <header class="bg-[#2C5E91] text-white py-6 shadow-md sticky top-0 z-10">
+        <div class="container mx-auto px-6 text-center">
+            <h1 class="text-3xl md:text-4xl font-bold">Roadmap: Escolhendo o Modelo de Regressão Certo</h1>
+            <p class="mt-2 text-lg text-[#B9D7F7]">Um Guia Passo a Passo Baseado em "Estatística II Para Leigos"</p>
+        </div>
+    </header>
+
+    <main class="container mx-auto px-4 md:px-6 py-12">
+
+        <section id="start" class="section-container">
+             <div class="step-box max-w-2xl mx-auto">
+                 <span class="step-number">🏁</span>
+                 <h3 class="font-semibold text-xl mb-2 text-[#2C5E91] pl-8">Ponto de Partida</h3>
+                 <p class="text-base">Você tem uma variável de resposta <span class="highlight">(Y)</span> que quer prever/explicar usando uma ou mais variáveis explicativas <span class="highlight">(X)</span>.</p>
+            </div>
+        </section>
+
+        <div class="text-center"><span class="flow-arrow">⬇️</span></div>
+
+        <section id="step1" class="section-container">
+             <div class="step-box max-w-2xl mx-auto">
+                <span class="step-number">1</span>
+                <h3 class="font-semibold text-xl mb-2 text-[#2C5E91] pl-8">Entender os Dados e o Objetivo</h3>
+                <p><strong>Identifique Y e Possíveis X:</strong> Quais variáveis estão envolvidas?</p>
+                <p class="mt-2"><strong>Qual o Tipo de Y?</strong></p>
+                <div class="decision-box mt-2 flex justify-around flex-wrap">
+                    <div>
+                        <span class="text-2xl mr-2">🔢</span> Y é Quantitativa (Numérica)? <br/>➡️ Siga para o <span class="font-bold">Passo 2</span>
+                    </div>
+                    <div class="mt-2 sm:mt-0">
+                         <span class="text-2xl mr-2">✔️/❌</span> Y é Categórica Binária (Sim/Não)? <br/>➡️ Vá para <span class="font-bold">Alternativa A (Logística)</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+         <div class="text-center"><span class="flow-arrow">⬇️</span></div>
+
+        <section id="step2" class="section-container">
+            <div class="step-box max-w-4xl mx-auto">
+                <span class="step-number">2</span>
+                 <h3 class="font-semibold text-xl mb-2 text-[#2C5E91] pl-8">Visualizar a Relação (Y Quantitativa)</h3>
+                 <p class="mb-4">Crie <span class="highlight">Diagramas de Dispersão</span> (X vs Y) para cada X potencial.</p>
+                 <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                     <div>
+                         <p class="font-semibold mb-1">Padrão Linear?</p>
+                         <div class="mini-chart-container border border-gray-200 rounded"> <canvas id="scatterLinear"></canvas> </div>
+                         <p class="text-xs mt-1">Ex: Altura vs Peso</p>
+                         <p class="decision-box">➡️ Siga para o <span class="font-bold">Passo 3</span></p>
+                     </div>
+                     <div>
+                         <p class="font-semibold mb-1">Padrão Curvo?</p>
+                         <div class="mini-chart-container border border-gray-200 rounded"> <canvas id="scatterCurved"></canvas> </div>
+                         <p class="text-xs mt-1">Ex: Desempenho vs Tempo Prática</p>
+                         <p class="decision-box">➡️ Vá para <span class="font-bold">Alternativa B (Não Linear)</span></p>
+                     </div>
+                     <div>
+                         <p class="font-semibold mb-1">Sem Padrão Claro?</p>
+                          <div class="mini-chart-container border border-gray-200 rounded"> <canvas id="scatterNone"></canvas> </div>
+                         <p class="text-xs mt-1">Ex: Cor favorita vs QI</p>
+                         <p class="decision-box">➡️ Provavelmente <span class="font-bold">não é um bom preditor</span>. Verifique correlação (3a) ou reavalie.</p>
+                     </div>
+                 </div>
+            </div>
+        </section>
+
+         <div class="text-center"><span class="flow-arrow">⬇️</span></div>
+
+        <section id="step3" class="section-container">
+             <div class="step-box max-w-3xl mx-auto">
+                 <span class="step-number">3</span>
+                 <h3 class="font-semibold text-xl mb-2 text-[#2C5E91] pl-8">Quantificar/Selecionar X (Padrão Linear)</h3>
+                 <div class="mb-4">
+                     <p class="font-semibold">3a. Apenas UMA Variável X:</p>
+                     <ul class="list-disc list-inside ml-4 text-sm">
+                         <li>Calcule a <span class="highlight">Correlação (r)</span>.</li>
+                         <li>É forte (+/-1) e significativa (valor-p baixo)?</li>
+                         <li><span class="font-bold text-green-600">Sim:</span> ➡️ Vá para <span class="font-bold">Alternativa C (Simples)</span></li>
+                         <li><span class="font-bold text-red-600">Não:</span> ➡️ Variável fraca. Considere outras X ou modelos.</li>
+                     </ul>
+                 </div>
+                 <div>
+                     <p class="font-semibold">3b. MÚLTIPLAS Variáveis X (X₁, X₂, ...):</p>
+                     <ul class="list-disc list-inside ml-4 text-sm">
+                         <li>Verifique <span class="highlight">Correlações X-Y</span> (elimine X's fracas).</li>
+                         <li>Verifique <span class="highlight">Multicolinearidade</span> (Correlações X-X altas <span class="text-red-600 font-bold">⚠️</span> - mantenha apenas uma das correlacionadas).</li>
+                          <li>➡️ Siga para o <span class="font-bold">Passo 4</span></li>
+                     </ul>
+                 </div>
+            </div>
+        </section>
+
+         <div class="text-center"><span class="flow-arrow">⬇️</span></div>
+
+        <section id="step4" class="section-container">
+            <div class="step-box max-w-3xl mx-auto">
+                <span class="step-number">4</span>
+                <h3 class="font-semibold text-xl mb-2 text-[#2C5E91] pl-8">Seleção Formal do Modelo (Múltiplas X Lineares)</h3>
+                 <p class="mb-2">Objetivo: Encontrar o melhor subconjunto de X's (equilíbrio entre ajuste e simplicidade).</p>
+                 <p class="font-semibold">Use Critérios de Avaliação:</p>
+                 <ul class="list-disc list-inside ml-4 text-sm mb-3">
+                     <li><span class="highlight">R² Ajustado:</span> <span class="text-green-600 font-bold">Alto</span> é melhor (poder explicativo ajustado).</li>
+                     <li><span class="highlight">Cp de Mallow:</span> <span class="text-green-600 font-bold">Baixo</span> (próximo ao nº preditores + 1) é melhor.</li>
+                     <li><span class="highlight">s (Erro Padrão):</span> <span class="text-green-600 font-bold">Baixo</span> é melhor (menor erro de previsão).</li>
+                 </ul>
+                 <p class="font-semibold">Aplique o Processo "Melhores Subconjuntos" (Preferido):</p>
+                 <div class="text-xs bg-blue-50 border border-blue-200 p-2 rounded mt-1 text-left">
+                     Software avalia modelos com 1 X, 2 X's, 3 X's... <span class="font-bold">➡️</span> Lista os melhores para cada tamanho <span class="font-bold">➡️</span> Compare usando os critérios acima <span class="font-bold">➡️</span> Escolha o mais simples com bom ajuste.
+                 </div>
+                <p class="decision-box mt-4">➡️ Vá para <span class="font-bold">Alternativa D (Múltipla)</span> com as X's selecionadas.</p>
+            </div>
+        </section>
+
+         <div class="text-center"><span class="flow-arrow">⬇️</span></div>
+
+        <section id="alternatives" class="section-container">
+             <h2 class="section-title">🛣️ Caminhos Alternativos e Avaliação Final</h2>
+             <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 max-w-6xl mx-auto">
+
+                 <div class="alternative-path bg-[#E6FFFA] border-[#38B2AC] text-[#2C7A7B]">
+                     <h3 class="font-bold text-lg mb-2">A: Regressão Logística (Y Binário)</h3>
+                     <p class="text-sm mb-2">Ajusta curva-S. Avalie com GoF (p grande), Sig. X's (p pequeno), Concordância (alta %). Use para estimar probabilidade `p̂`.</p>
+                      <div class="mini-chart-container"> <canvas id="sCurveAlt"></canvas> </div>
+                 </div>
+
+                 <div class="alternative-path bg-[#FFF5E6] border-[#ED8936] text-[#9C4221]">
+                     <h3 class="font-bold text-lg mb-2">B: Regressão Não Linear (Y Quant., Curva)</h3>
+                     <p class="text-sm mb-2">Polinomial (U, S, W) ou Exponencial (crescimento/decaimento). Avalie visualmente, R² Ajustado, e Resíduos (aleatórios!). Use para estimar `ŷ` (sem extrapolar!).</p>
+                     <div class="mini-chart-container"> <canvas id="curveAlt"></canvas> </div>
+                 </div>
+
+                 <div class="alternative-path bg-[#EBF4FF] border-[#63B3ED] text-[#2A4365]">
+                     <h3 class="font-bold text-lg mb-2">C: Regressão Linear Simples (Y Quant., Reta, 1 X)</h3>
+                     <p class="text-sm">Encontra reta `ŷ = a + bx`. Avalie com R², Resíduos (aleatórios, normais, var. constante), Teste t para `b`. Use para estimar `ŷ`. Cuidado: Extrapolação 🚧, Causa/Efeito 🚧.</p>
+                 </div>
+
+                 <div class="alternative-path bg-[#EBF4FF] border-[#63B3ED] text-[#2A4365]">
+                     <h3 class="font-bold text-lg mb-2">D: Regressão Linear Múltipla (Y Quant., Reta, >1 X)</h3>
+                     <p class="text-sm">Encontra modelo `ŷ = b₀ + b₁X₁ + ...`. Avalie com R² Ajustado, Resíduos (aleatórios, normais, var. constante), Testes t para cada `b`. Use para estimar `ŷ`. Cuidado: Extrapolação 🚧, Causa/Efeito 🚧.</p>
+                 </div>
+
+             </div>
+             <div class="material-card max-w-xl mx-auto mt-8">
+                 <h3 class="font-semibold text-xl mb-3 text-[#2C5E91]">Avaliação Final (CRUCIAL!)</h3>
+                 <p class="mb-3">Independentemente do modelo escolhido, <span class="font-bold">SEMPRE</span> avalie os <span class="highlight">Resíduos</span> (diferença entre Y real e Ŷ previsto):</p>
+                 <div class="chart-container h-48 max-h-48 mx-auto border border-gray-200 rounded mb-2"><canvas id="residualPlot"></canvas></div>
+                 <p class="text-sm">Idealmente, devem parecer <span class="font-bold text-green-600">aleatórios</span>, sem padrões, com variância constante e distribuição normal.</p>
+                 <p class="text-red-600 font-bold mt-2">⚠️ Padrões nos resíduos indicam problemas no modelo!</p>
+             </div>
+        </section>
+
+        <section id="conclusion" class="section-container border-t pt-10 mt-10">
+            <h2 class="section-title">🏁 Conclusão</h2>
+            <p class="text-xl max-w-3xl mx-auto text-[#1A3A5A]">A escolha do modelo é um <span class="highlight">processo iterativo</span>. Visualize ➡️ Escolha o tipo ➡️ Ajuste com software ➡️ <span class="font-bold text-[#2C5E91]">Avalie CRITICAMENTE</span> (resíduos!). O objetivo é encontrar o modelo <span class="highlight">mais simples (parcimonioso)</span> que explique bem os seus dados.</p>
+        </section>
+
+    </main>
+
+    <footer class="bg-[#2C5E91] text-white text-center py-4 mt-12">
+        <p class="text-sm text-[#B9D7F7]">&copy; 2025 Infográfico Estatístico. Baseado em "Estatística II Para Leigos".</p>
+    </footer>
+
+    <script>
+        // Tooltip callback
+        const tooltipTitleCallback = (tooltipItems) => {
+            const item = tooltipItems[0];
+            let label = item.chart.data.labels ? item.chart.data.labels[item.dataIndex] : `Ponto ${item.dataIndex + 1}`;
+            if (Array.isArray(label)) {
+              return label.join(' ');
+            } else {
+              return String(label);
+            }
+        };
+
+        // --- Scatter Plot Examples ---
+        const createScatter = (canvasId, data, color) => {
+            const ctx = document.getElementById(canvasId).getContext('2d');
+            new Chart(ctx, {
+                type: 'scatter',
+                data: { datasets: [{ label: 'Dados (X vs Y)', data: data, backgroundColor: color }] },
+                options: {
+                    responsive: true, maintainAspectRatio: false,
+                    scales: { x: { display: false }, y: { display: false } }, // Hide axes for mini examples
+                    plugins: { legend: { display: false }, tooltip: { enabled: false } } // Disable tooltips for mini examples
+                }
+            });
+        };
+        createScatter('scatterLinear', Array.from({length: 15}, (_, i) => ({x: i, y: i + (Math.random()-0.5)*2})), '#4F86C6');
+        createScatter('scatterCurved', Array.from({length: 15}, (_, i) => ({x: i, y: Math.pow(i-7, 2)/5 + (Math.random()-0.5)*2})), '#4F86C6');
+        createScatter('scatterNone', Array.from({length: 15}, () => ({x: Math.random()*15, y: Math.random()*10})), '#84B4E3');
+
+        // --- Alternative Path Curves ---
+         const createLine = (canvasId, data, color, tension = 0.4) => {
+            const ctx = document.getElementById(canvasId).getContext('2d');
+            new Chart(ctx, {
+                type: 'line',
+                data: { datasets: [{ label: 'Modelo', data: data, borderColor: color, borderWidth: 2.5, fill: false, pointRadius: 0, tension: tension }] },
+                options: {
+                    responsive: true, maintainAspectRatio: false,
+                    scales: {
+                        x: {
+                            type: 'linear', // Explicitly set type to linear
+                            display: false
+                        },
+                        y: {
+                            display: false
+                        }
+                    },
+                    plugins: { legend: { display: false }, tooltip: { enabled: false } }
+                }
+            });
+        };
+        // S-Curve Example - More points
+        const sCurveAltData = [];
+        for (let x = -5; x <= 5; x += 0.2) {
+             const yVal = 1 / (1 + Math.exp(-x*1.5));
+             sCurveAltData.push({x: x, y: yVal});
+        }
+        createLine('sCurveAlt', sCurveAltData, '#38B2AC', 0.1);
+
+        // Generic Curve Example (Quadratic) - More points
+        const curveAltData = [];
+        for (let x = -3; x <= 3; x += 0.2) {
+             curveAltData.push({x: x, y: x*x / 3});
+        }
+        createLine('curveAlt', curveAltData, '#ED8936', 0.4);
+
+        // --- Residual Plot Example ---
+         const createResidual = (canvasId) => {
+             const ctx = document.getElementById(canvasId).getContext('2d');
+             const residuals = Array.from({length: 30}, (_, i) => ({
+                 x: Math.random() * 10,
+                 y: (Math.random() - 0.5) * 4
+             }));
+             new Chart(ctx, {
+                 type: 'scatter',
+                 data: {
+                     datasets: [{
+                         label: 'Resíduos',
+                         data: residuals,
+                         backgroundColor: '#84B4E3', // Medium Blue
+                         pointRadius: 3
+                     }]
+                 },
+                 options: {
+                     responsive: true,
+                     maintainAspectRatio: false,
+                     scales: {
+                         x: { title: { display: true, text: 'Valor Previsto (Ŷ)', font: {size: 10} }, grid: { display: false }, ticks: { font: { size: 8 } } },
+                         y: {
+                             title: { display: true, text: 'Resíduo (Y - Ŷ)', font: {size: 10} },
+                             zeroLineColor: '#1A3A5A', // Darkest Blue
+                             zeroLineWidth: 1,
+                             ticks: { font: { size: 8 } }
+                         }
+                     },
+                     plugins: {
+                         legend: { display: false },
+                          tooltip: {
+                             callbacks: {
+                                 title: (tooltipItems) => `Ponto ${tooltipItems[0].dataIndex + 1}`,
+                                 label: (context) => `(Ŷ: ${context.raw.x.toFixed(1)}, Res: ${context.raw.y.toFixed(1)})`
+                            }
+                        }
+                     }
+                 }
+             });
+         };
+         createResidual('residualPlot');
+
+    </script>
+
+</body>
+</html>
+
